@@ -36,6 +36,11 @@ class Gen5_Rel(pr.Preprocessing_Base):
 				split_df["Delta_T"] = self.delta_t(self.temp_cols, split_df)
 			if not self.binary_cols == None:
 				self.binary_col_array(self.binary_cols, split_df)
+			if(fileN == "Rel_2019_4_12.csv"):
+				print('ayay')
+				exclude = [i for i in range(40, 58)]
+				print(exclude)
+				split_df = split_df.drop(exclude)
 			k = result_dir+"\\"+fileN[:-4] +"_" + name +".csv"
 			split_df.to_csv(k)
 		except Exception as e:
