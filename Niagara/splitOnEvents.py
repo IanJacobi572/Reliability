@@ -10,6 +10,7 @@ def find_nearest(array, value):
         return idx
     else:
         return idx-1
+
 directory = r'F:\Data on BDATAPROD2\Anes Madani\Niagara\UEF_Niagara\Conversion_Result'
 resultPath = r'C:\Niagara\Preprocessing_UEF'
 event_names = ['Ending Purge', 'Cut OUT', 'Cut IN', 'Waiting for T', 'Starting Purge', 'Starting Draw', 'Draw Complete']
@@ -22,21 +23,27 @@ for filename in os.listdir(directory):
         #Create a new column that contains the Draw Number
         df['Draw Number']=0
         df['Desc'] = ''
+        df['Gals Drawn'] = 0
         start_idxs = []
         for event in event_names:
+            #indecies of event
             specific_events = dfEvent.loc[dfEvent['Desc'].str.contains(event)]
+            #since we need the number, so that we can output the draw number
             for i in range(0, len(specific_events)):
                 event_time = specific_events.iloc[i][1]
                 idx = find_nearest(df['TimeStamp (sec)'].values, event_time)
                 if(event == 'Starting Draw'):
                     df.loc[idx, 'Desc'] = 'Starting Draw # ' + str(i+1)
+                    #uncomment if needed, just adds gals drawn to the output
+                    #gals = re.findall("\d+\.\d+", specific_events.iloc[i][5])[-1]
+                    #df.loc[idx, 'Gals Drawn'] = gals
                     start_idxs.append(idx)
                 elif(event == 'Draw Complete'):
                     df.loc[idx, 'Desc'] = event
                     df.loc[start_idxs[i]:idx, 'Draw Number'] = i+1
                 else:
                     df.loc[idx, 'Desc'] = event
-
+        #result file
         df.to_csv(os.path.join(resultPath,filename), index = False)
        
     else:

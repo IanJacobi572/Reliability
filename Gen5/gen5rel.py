@@ -30,6 +30,8 @@ class Gen5_Rel(pr.Preprocessing_Base):
 			split_df["Unit_Name"] = name
 			print(split_df['Unit_Name'])
 			zero = np.array([0])
+			if not "ALARM_01" in split_df.columns.values.tolist():
+				split_df["ALARM_01"] = ''
 			if not self.cols_to_fix == None:
 				self.prepare_arr_of_cols(zero, self.cols_to_fix, split_df)
 			if not self.temp_cols == None:
