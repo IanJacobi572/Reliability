@@ -33,8 +33,6 @@ for filename in os.listdir(directory):
                     start_idxs.append(idx)
                 elif(event == 'Draw Complete'):
                     df.loc[idx, 'Desc'] = event
-                    print(start_idxs)
-                    print(idx)
                     df.loc[start_idxs[i]:idx, 'Draw Number'] = i+1
                 else:
                     df.loc[idx, 'Desc'] = event
