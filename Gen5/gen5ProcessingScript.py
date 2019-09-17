@@ -25,7 +25,7 @@ for fileName in os.listdir(directory):
         if max(df['LOHTRTMP'])-min(df['LOHTRTMP']) > max(df['UPHTRTMP'])-min(df['UPHTRTMP']):
             df['min'] = df.iloc[argrelextrema(df.LOHTRTMP.values, np.less_equal, order=n)[0]]['LOHTRTMP']
         else:
-            df['min'] = df.iloc[argrelextrema(df.LOHTRTMP.values, np.less_equal, order=n)[0]]['UPHTRTMP']
+            df['min'] = df.iloc[argrelextrema(df.UPHTRTMP.values, np.less_equal, order=n)[0]]['UPHTRTMP']
     except:
             continue
         
