@@ -1,13 +1,16 @@
-import Preprocessing as pr
 import yaml
 from tkinter import messagebox, Label, Button, FALSE, Tk, Entry, Checkbutton, BooleanVar, StringVar
 import os
 import re
+from datetime import datetime
 from set_config import set_config
 from ftplib import FTP
-from num2words import num2words
 import pandas as pd 
+import Preprocessing as pr
+from dateutil.parser import *
+from num2words import num2words
 import numpy as np 
+from collections import OrderedDict
 class Gen5_Rel(pr.Preprocessing_Base):
 	def __init__(self, **kwargs):
 		super(Gen5_Rel, self).__init__(**kwargs)
@@ -15,7 +18,11 @@ class Gen5_Rel(pr.Preprocessing_Base):
 		self.flame_col = kwargs.get('flame_col')
 		self.instance_names = kwargs.get('instance_names')
 
-	
+	def get_file_date(self, name):
+		split = name.split("_")
+		day = split[-1][:-4]
+		date = parse(split[-3] + "-" + split[-2] + "-" + day)
+		return date.date() 
 	def create_multiple_file(self, df, result_dir, fileN, i, intended_cols_i, data_path):
 		try:
 			split_df = df[intended_cols_i].copy()
@@ -38,13 +45,11 @@ class Gen5_Rel(pr.Preprocessing_Base):
 				split_df["Delta_T"] = self.delta_t(self.temp_cols, split_df)
 			if not self.binary_cols == None:
 				self.binary_col_array(self.binary_cols, split_df)
-			if(fileN == "Rel_2019_4_12.csv"):
-				print('ayay')
-				exclude = [i for i in range(40, 58)]
-				print(exclude)
-				split_df = split_df.drop(exclude)
-			k = result_dir+"\\"+fileN[:-4] +"_" + name +".csv"
-			split_df.to_csv(k)
+			date = self.get_file_date(fileN)
+			start_date = parse('2019-7-8').date()
+			if(date >= start_date):
+				k = result_dir+"\\"+fileN[:-4] +"_" + name +".csv"
+				split_df.to_csv(k)
 		except Exception as e:
 			print(fileN)
 			pass
