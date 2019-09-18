@@ -14,24 +14,35 @@ for fileName in os.listdir(directory):
     df = pd.read_csv(os.path.join(directory,fileName))   
     print(fileName)
     
-    #Find the local minimas
     #Every cycle should take getCycles() and timestamp between each row of data is 30sec 
     #so getCycles()/30=X records hence X rows per cycle
     key = df.loc[1, 'Station']
     key = Info.info.get(key)
     n = int(key.getCycles()*0.8) #since we're supposed to have a local min in each X rows, we use 80% to be safe from noise
+    
+    #Get the local minimas of the appropriate parameter (LOW or UP HEATER TEMPERATURE)
     try:
-        df['min'] = df.iloc[argrelextrema(df.LOHTRTMP.values, np.less_equal, order=n)[0]]['LOHTRTMP']
+        if max(df['LOHTRTMP'])-min(df['LOHTRTMP']) > max(df['UPHTRTMP'])-min(df['UPHTRTMP']):
+            df['min'] = df.iloc[argrelextrema(df.LOHTRTMP.values, np.less_equal, order=n)[0]]['LOHTRTMP']
+        else:
+            df['min'] = df.iloc[argrelextrema(df.UPHTRTMP.values, np.less_equal, order=n)[0]]['UPHTRTMP']
     except:
-        continue
-
-
-    #Find the local minimas
-    #Every cycle should take 2hrs and timestamp between each row of data is 30sec 
-    #so 7200/30=240records hence 240rows per cycle
-    #n=200 #since we're supposed to have a local min in each 240, we use 200 to be safe from noise
-    #df['min'] = df.iloc[argrelextrema(df.LOHTRTMP.values, np.less_equal, order=n)[0]]['LOHTRTMP']
-    #df['max'] = df.iloc[argrelextrema(df.LOHTRTMP.values, np.greater_equal, order=n)[0]]['LOHTRTMP']
+            continue
+        
+    
+    #Addd Heater Base Model column
+    df['HB']=key.getBaseModel()
+    #Add Operational Mode Column
+    df['Operational Mode']=key.getOperationalMode()
+    #Combine Station and UnitName columns in a new column
+    df['Station/UnitName']=key.getStation() + '/' + key.getIcn()
+    #Add Cycling Option that has 3 different types
+    if key.getCycles()==240:
+        df['Cycling Option']=3
+    elif key.getCycles()==140:
+        df['Cycling Option']=2
+    elif key.getCycles()==120:
+        df['Cycling Option']=1
 
     #Visualization
     '''plt.scatter(df.index, df['min'], c='r')
