@@ -18,10 +18,8 @@ class Gen5_Rel(pr.Preprocessing_Base):
 		self.flame_col = kwargs.get('flame_col')
 		self.instance_names = kwargs.get('instance_names')
 
-	def get_file_date(self, name):
-		split = name.split("_")
-		day = split[-1][:-4]
-		date = parse(split[-3] + "-" + split[-2] + "-" + day)
+	def get_file_date(self, date):
+		date = parse(date)
 		return date.date() 
 	def create_multiple_file(self, df, result_dir, fileN, i, intended_cols_i, data_path):
 		try:
@@ -45,10 +43,16 @@ class Gen5_Rel(pr.Preprocessing_Base):
 				split_df["Delta_T"] = self.delta_t(self.temp_cols, split_df)
 			if not self.binary_cols == None:
 				self.binary_col_array(self.binary_cols, split_df)
-			date = self.get_file_date(fileN)
+			date = self.get_file_date(split_df["Date"].values.tolist()[1])
 			start_date = parse('2019-7-8').date()
 			if(date >= start_date):
 				k = result_dir+"\\"+fileN[:-4] +"_" + name +".csv"
+				split_df.to_csv(k)
+			else:
+				split_df['Unit_Name'] = 'April_' + name
+				split_df['Station'] = 'April_' + self.station_names.get(instance)
+				k = result_dir+"\\"+fileN[:-4] +"_" + name +".csv"
+				split_df['INSTANCE'] = 'April_' + str(instance)
 				split_df.to_csv(k)
 		except Exception as e:
 			print(fileN)
