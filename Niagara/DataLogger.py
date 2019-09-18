@@ -3,14 +3,19 @@ import pandas as pd
 import numpy
 #def del_row_with_dashes(df):
 	#df.drop(df.loc[].index, inplace =True)
+whtr_modes = ['Off', 'Ready',            'Running',  'Off: Low Flow',    "Off: Error", 'Burner Stage TestMfg. Test',  'Baseline Test',    'Flow Restriction' ]
 
 for mac in os.scandir(r"C:\Niagara\Macstuffffffff"):
 	df = pd.read_csv(mac.path)
-	for col in df.columns.values.tolist()[1:]:
-		new_cols = ["timestamp", col]
-		split_df = df[new_cols].copy()
-		split_df.dropna(inplace = True)
-		#del_row_with_dashes(split_df)
-		if not os.path.exists('C:/Niagara/MACPRP/' + col):
-			os.mkdir('C:/Niagara/MACPRP/' + col)
-		split_df.to_csv('c:/Niagara/MACPRP/' + col + '/'+mac.name  + '.csv')
+	if 'WHTRMODE' in df.columns.values.tolist():
+		whtr_ints = df['WHTRMODE'].copy()
+		whtr_strs = []
+		for mode in whtr_ints.values:
+			print (mode)
+			if not numpy.isnan(mode):
+				whtr_strs.append(whtr_modes[int(mode)])
+			else: 
+				whtr_strs.append("")
+		df['WHTRMODESTRINGS'] = whtr_strs
+		print(whtr_strs)
+	df.to_csv('c:/Niagara/MACPRP/' + '/'+mac.name)
