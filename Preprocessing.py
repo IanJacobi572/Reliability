@@ -191,19 +191,18 @@ class Preprocessing_Base:
             if(int(last_int) > 1):
                 return True
     def format_multiple_cols(self, df, fileN, result_dir, data_path, i, last_int):
-        colnames = df.columns.values.tolist()
-        intended_cols_i =['Time', 'Date'] + [col + "_" + str(i) for col in self.intended_cols[2:-1]]
+        for i in range(1, int(last_int)+1):
+            colnames = df.columns.values.tolist()
+            intended_cols_i =['Time', 'Date'] + [col + "_" + str(i) for col in self.intended_cols[2:-1]]
 
-        #if not self.binary_cols == None:
-        #intended_cols_i.append("SW_VERSN")
-        #df.columns = intended_cols_i
-        zero = np.array([0])
-        #self.df_to_string(alarm_i, df)
-        self.unit_name_multiple(data_path, df, i)
-        self.create_multiple_file(df, result_dir, fileN, i, intended_cols_i, data_path)
-        if i < int(last_int):
-            i+= 1
-            self.format_multiple_cols(df, fileN, result_dir, data_path, i, last_int)
+            #if not self.binary_cols == None:
+            #intended_cols_i.append("SW_VERSN")
+            #df.columns = intended_cols_i
+            zero = np.array([0])
+            #self.df_to_string(alarm_i, df)
+            self.unit_name_multiple(data_path, df, i)
+            self.create_multiple_file(df, result_dir, fileN, i, intended_cols_i, data_path)
+      
     #I should probably move this into my data files instead of the module since it is the main driving fnction
     def format_cols(self, cols, df, fileN, result_dir, data_path):
         if not self.alarm_name == None:
