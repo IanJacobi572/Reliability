@@ -46,8 +46,8 @@ class Gen5_Rel(pr.Preprocessing_Base):
 			#Deprecated date check
 			#date = self.get_file_date(split_df["Date"].values.tolist()[1])
 			#start_date = parse('2019-7-8').date()
-			k = result_dir+"\\"+fileN[:-4] +"_" + name +".csv"
-			split_df.to_csv(k)
+			k = result_dir+"\\" + name +".csv"
+			split_df.to_csv(k, mode = 'a')
 		except Exception as e:
 			print(fileN)
 			pass
