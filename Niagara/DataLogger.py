@@ -15,7 +15,7 @@ for mac in os.scandir(r"C:\Niagara\Macstuffffffff"):
 			if not numpy.isnan(mode):
 				whtr_strs.append(whtr_modes[int(mode)])
 			else: 
-				whtr_strs.append("")
+				whtr_strs.append("Off")
 		df['WHTRMODESTRINGS'] = whtr_strs
 		print(whtr_strs)
 	df.to_csv('c:/Niagara/MACPRP/' + '/'+mac.name)
