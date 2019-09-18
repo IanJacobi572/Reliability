@@ -7,6 +7,7 @@ whtr_modes = ['Off', 'Ready',            'Running',  'Off: Low Flow',    "Off: E
 
 for mac in os.scandir(r"C:\Niagara\Macstuffffffff"):
 	df = pd.read_csv(mac.path)
+	df = df.dropna(how='all')
 	if 'WHTRMODE' in df.columns.values.tolist():
 		whtr_ints = df['WHTRMODE'].copy()
 		whtr_strs = []
