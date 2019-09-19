@@ -32,10 +32,8 @@ class Gen5_Rel(pr.Preprocessing_Base):
 			date_str = split_df["Date"].values.tolist()[1]
 			name = self.instance_names.get(instance)
 			k = result_dir+"\\" + fileN[:-4] + '_' +  name +".csv"
-			sig = name + "/" + date_str
 			split_df["Station"] = self.station_names.get(instance)
 			split_df["Unit_Name"] = name
-			split_df["Sig"] = sig
 			#if split_df["Date"].values.tolist()[1] in df_result["Date"]:
 				#print('aaaa')
 			zero = np.array([0])
