@@ -29,6 +29,10 @@ class Gen5_Rel(pr.Preprocessing_Base):
 			self.del_row_with_dashes(split_df)
 			#print(int(split_df['INSTANCE'].values[0]) > 7)
 			instance = str(i)
+			for col in self.all_cols:
+				if not col in split_df.columns.values.tolist()[:-1]:
+					split_df[col] = ""
+			split_df = split_df[self.all_cols[:-1]].copy()
 			print(i)
 			date_str = split_df["Date"].values.tolist()[1]
 			name = self.instance_names.get(instance)
@@ -42,10 +46,6 @@ class Gen5_Rel(pr.Preprocessing_Base):
 			#if split_df["Date"].values.tolist()[1] in df_result["Date"]:
 				#print('aaaa')
 			zero = np.array([0])
-			for col in self.all_cols:
-				if not col in split_df.columns.values.tolist()[:-1]:
-					split_df[col] = ""
-			split_df = split_df[self.all_cols[:-1]].copy()
 			if not self.cols_to_fix == None:
 				self.prepare_arr_of_cols(zero, self.cols_to_fix, split_df)
 			if not self.temp_cols == None:
