@@ -3,6 +3,10 @@ import yaml
 from tkinter import messagebox, Label, Button, FALSE, Tk, Entry, Checkbutton, BooleanVar, StringVar
 import os
 import re
+from datetime import datetime
+
+from dateutil.parser import *
+
 from set_config import set_config
 from ftplib import FTP
 from num2words import num2words
@@ -13,10 +17,14 @@ class Niagara_Reliability(pr.Preprocessing_Base):
 		super(Niagara_Reliability, self).__init__(**kwargs)
 		self.flame_col = kwargs.get('flame_col')
 		self.station_names = kwargs.get('station_names')
+		self.diff_cycles = kwargs.get('diff_cycles')
+		self.target_cycles = kwargs.get('target_cycles')
 		self.groups = kwargs.get('groups')
 		self.instance_names = kwargs.get('instance_names')
 	#import ipdb
-
+	def get_file_date(self, date):
+		date = parse(date)
+		return date.date() 
 	def count_non_consec_flames(self, df):
 		sucsesful_ignitions = []
 		cons = False
@@ -48,23 +56,35 @@ class Niagara_Reliability(pr.Preprocessing_Base):
 			print(intended_cols_i)
 			split_df.columns = intended_cols_i[:2] + [re.sub(r'_?[^A-Z_]+$', "", col) for col in intended_cols_i[2:]]
 			split_df["INSTANCE"] = i
+			date = self.get_file_date(split_df["Date"].values.tolist()[1])
+			split_df["Month"] = date.strftime('%B')
 			split_df = split_df.rename(columns = {"INSTANCE": "Unit_Name"})
 			self.df_to_string("Unit_Name", split_df)
 			split_df["Unit_Name"].replace(self.instance_names, inplace = True)
-			split_df["Station"] = self.station_names.get(str(i))
-			split_df["Group"] = self.groups.get(str(i))
+			station = self.station_names.get(str(i))
+			split_df["Station"] = station
+			group = self.groups.get(str(i))
+			split_df["Group"] = group
+			split_df["Target Cycles"] = self.target_cycles.get(group)
 			self.binary_to_string(self.flame_col, split_df)
-
 			split_df["Location"] = "Nuevo Laredo"
 			split_df["Category"] = "Reliability"
+
 			split_df["Successful_Ignitions"] = self.count_non_consec_flames(split_df)
+			a = (parse('2019-8-20'))
+			a = a.date()
+			print(date)
+			print(a)
+			if date == parse('2019-8-20').date():
+				split_df["Successful_Ignitions"].values[0] = int(split_df["Successful_Ignitions"].values[0]) + self.diff_cycles.get(station)
+				print(self.diff_cycles.get(station))
 			#print(split_df['Unit_Name'].values[1])
 			split_df["Delta_T"] = self.delta_t(self.temp_cols, split_df)
 
 			k = result_dir+"\\"+fileN[:-4] +"_" + self.instance_names.get(str(i)) +".csv"
 			split_df.to_csv(k)
 		except Exception as e:
-			pass
+			raise e
 	def find_different(self, data_path, result_dir):
 		already_processed = []    
 		file_names = []

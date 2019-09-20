@@ -12,7 +12,6 @@ del_cols = ()
 path  = 'c:/gen5'
 intended_cols_outside = []
 intended_cols = cols.find_intended_cols_multiple_file(data_path, path)
-
 print(intended_cols)
 instance_names = {
 	'14':'NL1299',
@@ -50,8 +49,7 @@ station_names = {
 	'8':'F1',
 	'13':'F7'
 }
-gen_out = pr.Gen5_Rel(station_names = station_names,instance_names = instance_names,intended_cols= intended_cols, path  = 'c:/gen5', flame_col = flame_col)
-gen_out.main(data_path, result_dir)
+all_cols = intended_cols.copy()
 subfolders = [f.path for f in os.scandir(data_path) if f.is_dir() ]
 for sub in subfolders:
 	subfolders = subfolders + [f.path for f in os.scandir(sub) if f.is_dir() ]
@@ -59,5 +57,10 @@ print(subfolders)
 for sub in subfolders:
 	intended_cols_sub = cols.find_intended_cols_multiple_file(sub, path)
 	if not(intended_cols_sub == None):
-		gen_sub = pr.Gen5_Rel(station_names = station_names, instance_names = instance_names, intended_cols = intended_cols_sub, path = path, flame_col = flame_col)
+		col_diff = sorted(list(set(intended_cols) - set(intended_cols_sub)))
+		print(col_diff)
+		all_cols = all_cols + [f for f in col_diff]
+		gen_sub = pr.Gen5_Rel(all_cols = all_cols,station_names = station_names, instance_names = instance_names, intended_cols = intended_cols_sub, path = path, flame_col = flame_col)
 		gen_sub.main(sub, result_dir)
+gen_out = pr.Gen5_Rel(all_cols = all_cols,station_names = station_names,instance_names = instance_names,intended_cols= intended_cols, path  = 'c:/gen5', flame_col = flame_col)
+gen_out.main(data_path, result_dir)

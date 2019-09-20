@@ -17,6 +17,7 @@ class Gen5_Rel(pr.Preprocessing_Base):
 		self.station_names = kwargs.get('station_names')
 		self.flame_col = kwargs.get('flame_col')
 		self.instance_names = kwargs.get('instance_names')
+		self.all_cols = kwargs.get('all_cols')
 
 	def get_file_date(self, date):
 		date = parse(date)
@@ -27,10 +28,11 @@ class Gen5_Rel(pr.Preprocessing_Base):
 			split_df.columns = self.intended_cols[:-1]
 			self.del_row_with_dashes(split_df)
 			#print(int(split_df['INSTANCE'].values[0]) > 7)
-			instance = str(int(split_df["INSTANCE"].values.tolist()[1]))
-
+			instance = str(i)
+			print(i)
 			date_str = split_df["Date"].values.tolist()[1]
 			name = self.instance_names.get(instance)
+			print()
 			k = result_dir+"\\" + name +".csv"
 			sig = name + "/" + date_str
 			split_df["Station"] = self.station_names.get(instance)
@@ -39,8 +41,10 @@ class Gen5_Rel(pr.Preprocessing_Base):
 			#if split_df["Date"].values.tolist()[1] in df_result["Date"]:
 				#print('aaaa')
 			zero = np.array([0])
-			if not "ALARM_01" in split_df.columns.values.tolist():
-				split_df["ALARM_01"] = ''
+			for col in self.all_cols:
+				if not col in split_df.columns.values.tolist()[:-1]:
+					split_df[col] = ""
+			split_df = split_df[self.all_cols[:-1]].copy()
 			if not self.cols_to_fix == None:
 				self.prepare_arr_of_cols(zero, self.cols_to_fix, split_df)
 			if not self.temp_cols == None:
