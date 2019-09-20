@@ -4,6 +4,7 @@ sys.path.append(os.path.dirname(os.getcwd()))
 import gen5rel as pr 
 import Preprocessing as cols
 import re
+from collections import OrderedDict
 import os
 data_path = 'F:/Data on BDATAPROD2/RDDEPT/Satellite Lab/Reliability EC Folders/EC 06768 - HPWH - Khurram Sajjad/NL TESTING 2019/ECONET Data'
 result_dir = 'c:/gen5/prp'
@@ -49,7 +50,7 @@ station_names = {
 	'8':'F1',
 	'13':'F7'
 }
-all_cols = intended_cols.copy()
+all_cols = [f for f in intended_cols]
 subfolders = [f.path for f in os.scandir(data_path) if f.is_dir() ]
 for sub in subfolders:
 	subfolders = subfolders + [f.path for f in os.scandir(sub) if f.is_dir() ]
@@ -58,8 +59,13 @@ for sub in subfolders:
 	intended_cols_sub = cols.find_intended_cols_multiple_file(sub, path)
 	if not(intended_cols_sub == None):
 		col_diff = sorted(list(set(all_cols) - set(intended_cols_sub)))
-		print(col_diff)
 		all_cols = all_cols + [f for f in col_diff]
+all_cols = list(OrderedDict.fromkeys(all_cols))
+
+for sub in subfolders:	
+
+	intended_cols_sub = cols.find_intended_cols_multiple_file(sub, path)
+	if not(intended_cols_sub == None):
 		gen_sub = pr.Gen5_Rel(all_cols = all_cols,station_names = station_names, instance_names = instance_names, intended_cols = intended_cols_sub, path = path, flame_col = flame_col)
 		gen_sub.main(sub, result_dir)
 gen_out = pr.Gen5_Rel(all_cols = all_cols,station_names = station_names,instance_names = instance_names,intended_cols= intended_cols, path  = 'c:/gen5', flame_col = flame_col)
