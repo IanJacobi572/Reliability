@@ -84,7 +84,7 @@ class Niagara_Reliability(pr.Preprocessing_Base):
 			k = result_dir+"\\"+fileN[:-4] +"_" + self.instance_names.get(str(i)) +".csv"
 			split_df.to_csv(k)
 		except Exception as e:
-			raise e
+			pass
 	def find_different(self, data_path, result_dir):
 		already_processed = []    
 		file_names = []
