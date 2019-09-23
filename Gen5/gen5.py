@@ -58,10 +58,12 @@ print(subfolders)
 for sub in subfolders:
 	intended_cols_sub = cols.find_intended_cols_multiple_file(sub, path)
 	if not(intended_cols_sub == None):
-		col_diff = sorted(list(set(all_cols) - set(intended_cols_sub)))
+		col_diff = sorted(list(set(intended_cols_sub)- set(all_cols) ))
+		print(col_diff)
 		all_cols = all_cols + [f for f in col_diff]
 all_cols = list(OrderedDict.fromkeys(all_cols))
-
+print(all_cols)
+a
 for sub in subfolders:	
 
 	intended_cols_sub = cols.find_intended_cols_multiple_file(sub, path)
