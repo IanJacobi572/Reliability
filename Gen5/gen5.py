@@ -52,8 +52,8 @@ station_names = {
 	'8':'F1',
 	'13':'F7'
 }
-#for file in os.scandir(result_dir):
-	#os.unlink(file.path)
+for file in os.scandir(result_dir):
+	os.unlink(file.path)
 all_cols = [f for f in intended_cols]
 subfolders = [f.path for f in os.scandir(data_path) if f.is_dir() ]
 for sub in subfolders:
