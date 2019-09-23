@@ -11,7 +11,6 @@ from dateutil.parser import *
 from num2words import num2words
 import numpy as np 
 from collections import OrderedDict
-from collections import OrderedDict
 class Gen5_Rel(pr.Preprocessing_Base):
 	def __init__(self, **kwargs):
 		super(Gen5_Rel, self).__init__(**kwargs)
@@ -31,9 +30,9 @@ class Gen5_Rel(pr.Preprocessing_Base):
 			#print(int(split_df['INSTANCE'].values[0]) > 7)
 			instance = str(i)
 			for col in self.all_cols:
-				if not col in split_df.columns.values.tolist()[:-1]:
+				if not col in split_df.columns.values.tolist():
 					split_df[col] = ""
-			split_df = split_df[self.all_cols[:-1]].copy()
+			split_df = split_df[self.all_cols].copy()
 			print(i)
 			date_str = split_df["Date"].values.tolist()[1]
 			name = self.instance_names.get(instance)
