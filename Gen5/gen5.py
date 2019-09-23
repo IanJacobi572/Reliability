@@ -63,7 +63,6 @@ for sub in subfolders:
 		all_cols = all_cols + [f for f in col_diff]
 all_cols = list(OrderedDict.fromkeys(all_cols))
 print(all_cols)
-a
 for sub in subfolders:	
 
 	intended_cols_sub = cols.find_intended_cols_multiple_file(sub, path)
