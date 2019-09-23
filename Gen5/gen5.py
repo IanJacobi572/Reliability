@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 import sys
 sys.path.append(os.path.dirname(os.getcwd()))
 import gen5rel as pr 
@@ -6,6 +7,7 @@ import Preprocessing as cols
 import re
 from collections import OrderedDict
 import os
+start_time = datetime.now()
 data_path = 'F:/Data on BDATAPROD2/RDDEPT/Satellite Lab/Reliability EC Folders/EC 06768 - HPWH - Khurram Sajjad/NL TESTING 2019/ECONET Data'
 result_dir = 'c:/gen5/prp'
 flame_col = 'HEATCTRL'
@@ -50,6 +52,8 @@ station_names = {
 	'8':'F1',
 	'13':'F7'
 }
+for file in os.scandir(result_dir):
+	os.unlink(file.path)
 all_cols = [f for f in intended_cols]
 subfolders = [f.path for f in os.scandir(data_path) if f.is_dir() ]
 for sub in subfolders:
@@ -71,3 +75,4 @@ for sub in subfolders:
 		gen_sub.main(sub, result_dir)
 gen_out = pr.Gen5_Rel(all_cols = all_cols,station_names = station_names,instance_names = instance_names,intended_cols= intended_cols, path  = 'c:/gen5', flame_col = flame_col)
 gen_out.main(data_path, result_dir)
+print(datetime.now() - start_time)
