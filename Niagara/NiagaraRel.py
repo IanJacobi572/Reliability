@@ -69,14 +69,13 @@ class Niagara_Reliability(pr.Preprocessing_Base):
 			self.binary_to_string(self.flame_col, split_df)
 			split_df["Location"] = "Nuevo Laredo"
 			split_df["Category"] = "Reliability"
-
-			split_df["Successful_Ignitions"] = self.count_non_consec_flames(split_df)
+			split_df["Cycles"] = self.count_non_consec_flames(split_df)
 			a = (parse('2019-8-20'))
 			a = a.date()
 			print(date)
 			print(a)
 			if date == parse('2019-8-20').date():
-				split_df["Successful_Ignitions"].values[0] = int(split_df["Successful_Ignitions"].values[0]) + self.diff_cycles.get(station)
+				split_df["Cycles"].values[0] = int(split_df["Cycles"].values[0]) + self.diff_cycles.get(station)
 				print(self.diff_cycles.get(station))
 			#print(split_df['Unit_Name'].values[1])
 			split_df["Delta_T"] = self.delta_t(self.temp_cols, split_df)

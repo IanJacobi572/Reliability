@@ -72,8 +72,8 @@ diff_cycles = {
 	'H9': 333
 }
 station_names2 = {
-	'1' : 'H8',
-	'2' : 'H9'
+	'2' : 'H8',
+	'1' : 'H9'
 }
 groups =  {
 	'1':"1",
@@ -92,8 +92,8 @@ groups =  {
 	'14':"3"
 }
 instance_names_2 = {
-	'1' : 'ICN1266',
-	'2' : 'ICN1267'
+	'2' : 'ICN1266',
+	'1' : 'ICN1267'
 }
 groups2 = {
 	'1':'Low Flow',

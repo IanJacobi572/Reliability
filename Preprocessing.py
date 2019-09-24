@@ -178,7 +178,7 @@ class Preprocessing_Base:
                 print(fileN)
                 try:
                     df.columns = self.intended_cols
-                    self.format_cols(cols, df, fileN, result_dir, data_path)
+                   # self.format_cols(cols, df, fileN, result_dir, data_path)
                 except Exception as e:
                     pass
 

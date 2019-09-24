@@ -36,7 +36,8 @@ class Niagara_Field(pr.Preprocessing_Base):
 			    split_df["Delta_T"] = self.delta_t(self.temp_cols, split_df)
 			self.unit_name_multiple(data_path, split_df, i)
 			self.binary_col_array(self.binary_cols, split_df)
-			split_df["Successful_Ignitions"] = self.count_non_consec_flames(split_df)
+			split_df["Cycles"] = self.count_non_consec_flames(split_df)
+			split_df["Target Cycles"] = 0			
 			split_df["Delta_T"] = self.delta_t(self.temp_cols, split_df)
 			k = result_dir+"\\"+fileN[:-4] +"_" + str(i) +".csv"
 			split_df.to_csv(k)
@@ -77,7 +78,8 @@ class Niagara_Field(pr.Preprocessing_Base):
 			# Fix the Gallons Columns, Successful Ignitions, Failed Ignitions
 			# ,Flame Failures, Burner Minutes
 			zero = np.array([0])
-			df["Successful_Ignitions"] = self.count_non_consec_flames(df)
+			df["Cycles"] = self.count_non_consec_flames(df)
+			df["Target Cycles"] = 0
 
 			# Taking the Absolute Value of the both the Deviations for easy
 			# analysis

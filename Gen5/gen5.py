@@ -69,7 +69,6 @@ all_cols = list(OrderedDict.fromkeys(all_cols))
 all_cols.remove('U')
 print(all_cols)
 for sub in subfolders:	
-
 	intended_cols_sub = cols.find_intended_cols_multiple_file(sub, path)
 	if not(intended_cols_sub == None):
 		gen_sub = pr.Gen5_Rel(all_cols = all_cols,station_names = station_names, instance_names = instance_names, intended_cols = intended_cols_sub, path = path, flame_col = flame_col)

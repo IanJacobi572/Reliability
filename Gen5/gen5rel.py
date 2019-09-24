@@ -24,6 +24,7 @@ class Gen5_Rel(pr.Preprocessing_Base):
 		return date.date() 
 	def create_multiple_file(self, df, result_dir, fileN, i, intended_cols_i, data_path):
 		try:
+
 			split_df = df[intended_cols_i].copy()
 			split_df.columns = self.intended_cols[:-1]
 			self.del_row_with_dashes(split_df)
@@ -31,7 +32,7 @@ class Gen5_Rel(pr.Preprocessing_Base):
 			instance = str(i)
 			for col in self.all_cols:
 				if not col in split_df.columns.values.tolist():
-					split_df[col] = ""
+					split_df[col] = np.nan
 			split_df = split_df[self.all_cols].copy()
 			print(i)
 			date_str = split_df["Date"].values.tolist()[1]
@@ -43,6 +44,7 @@ class Gen5_Rel(pr.Preprocessing_Base):
 			sig = name + "/" + date_str
 			split_df["Unit_Name"] = name
 			split_df["Sig"] = sig
+			split_df.fillna('')
 			#if split_df["Date"].values.tolist()[1] in df_result["Date"]:
 				#print('aaaa')
 			zero = np.array([0])
