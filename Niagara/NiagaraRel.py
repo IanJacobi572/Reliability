@@ -55,17 +55,20 @@ class Niagara_Reliability(pr.Preprocessing_Base):
 			self.del_row_with_dashes(split_df)
 			print(intended_cols_i)
 			split_df.columns = intended_cols_i[:2] + [re.sub(r'_?[^A-Z_]+$', "", col) for col in intended_cols_i[2:]]
+			
 			split_df["INSTANCE"] = i
-			date = self.get_file_date(split_df["Date"].values.tolist()[1])
+			split_df = split_df.copy(self.intended_cols)
+			date = self.get_file_date(split_df["Date"].values.tolist()[-1])
+			print(i)
+			print(date)
 			split_df["Month"] = date.strftime('%B')
-			split_df = split_df.rename(columns = {"INSTANCE": "Unit_Name"})
-			self.df_to_string("Unit_Name", split_df)
-			split_df["Unit_Name"].replace(self.instance_names, inplace = True)
+			split_df['Unit_Name'] = self.instance_names.get(i)
 			station = self.station_names.get(str(i))
 			split_df["Station"] = station
 			group = self.groups.get(str(i))
 			split_df["Group"] = group
-			split_df["Target Cycles"] = self.target_cycles.get(group)
+			target = self.target_cycles.get(group)
+			split_df["Target Cycles"] = target
 			self.binary_to_string(self.flame_col, split_df)
 			split_df["Location"] = "Nuevo Laredo"
 			split_df["Category"] = "Reliability"
@@ -73,15 +76,15 @@ class Niagara_Reliability(pr.Preprocessing_Base):
 			a = (parse('2019-8-20'))
 			a = a.date()
 			print(date)
-			print(a)
-			if date == parse('2019-8-20').date():
-				split_df["Cycles"].values[0] = int(split_df["Cycles"].values[0]) + self.diff_cycles.get(station)
-				print(self.diff_cycles.get(station))
 			#print(split_df['Unit_Name'].values[1])
 			split_df["Delta_T"] = self.delta_t(self.temp_cols, split_df)
 
-			k = result_dir+"\\"+fileN[:-4] +"_" + self.instance_names.get(str(i)) +".csv"
-			split_df.to_csv(k)
+			k = result_dir+"\\R"+ self.instance_names.get(str(i)) +".csv"
+			if(os.path.exists(k)):
+				print('a')
+				split_df.to_csv(k, mode = 'a', header = False, index = False)
+			else: 
+				split_df.to_csv(k, mode = 'a', index = False)
 		except Exception as e:
 			pass
 	def find_different(self, data_path, result_dir):
@@ -99,17 +102,18 @@ class Niagara_Reliability(pr.Preprocessing_Base):
 		# print all entries that are files
 				file_names.append(entry.name)
 
-		file_names = sorted(list(set(file_names) - set(already_processed)))
+		file_names = sorted(list(set(file_names)))
+		print(file_names)
 		return file_names
 	#when you have a manifold, consider them seperately, and split the file in hald
 	def format_multiple_cols(self, df, fileN, result_dir, data_path, i, last_dig):
-		intended_cols_i = ["Time", "Date"]
-		intended_cols_i = intended_cols_i + [col + "_" + str(i) for col in self.intended_cols[2:]]
-		print(intended_cols_i)
-		self.create_multiple_file(df, result_dir, fileN, i, intended_cols_i)
-		if i < last_dig:
-			i+= 1
-			self.format_multiple_cols(df, fileN, result_dir, data_path, i, last_dig)
+		for i in range(1, int(last_dig)+1):
+			intended_cols_i = ["Time", "Date"]
+			intended_cols_i = intended_cols_i + [col + "_" + str(i) for col in self.intended_cols[2:]]
+			print(intended_cols_i)
+			name = self.instance_names.get(str(i))
+			
+			self.create_multiple_file( df, result_dir, fileN, i, intended_cols_i )
 	def read_files(self, data_path, result_dir):
 		file_names = self.find_different(data_path, result_dir)
 		for fileN in file_names:

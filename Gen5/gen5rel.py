@@ -60,8 +60,6 @@ class Gen5_Rel(pr.Preprocessing_Base):
 			#start_date = parse('2019-7-8').date()
 
 			if os.path.exists(k):
-				df_result_date = pd.read_csv(k, usecols = ['Sig'])
-				if not sig in df_result_date["Sig"].values:
 					split_df.to_csv(k, mode = 'a', header = False, index = False)
 			else:
 				split_df.to_csv(k, index = False)

@@ -1,13 +1,21 @@
 import os
+import pandas as pd
 import sys
+import datetime
+from dateutil.parser import *
 sys.path.append(os.path.dirname(os.getcwd()))
 from NiagaraRel import Niagara_Reliability as nr
 intended_cols = ("Time","Date","INSTANCE","TEMP__IN","TEMP_OUT","TEMPHTX1","TEMP_EXH","VOLU_CTL","FLOW_GPM","BYPRATIO","FAN__SPD","FLM_ROD1","ALARM_01")
 path = 'C:/Niagara'
 data_path = "//onerheem/whd-onerheemdfs/Data on BDATAPROD2/RDDEPT/Satellite Lab/Reliability EC Folders/EC06619 -NIAGARA 2018 TAKASHI/NL TESTING 2019/ECONET Data"
-#data_path =  r'C:\Users\ian.jacobi\Documents\ltere'
+#data_path =  r'C:\Users\ian.jacobi\Documents\aaaa\niagra\RelData'
 data_path2 = "F:/Data on BDATAPROD2/RDDEPT/Satellite Lab/Reliability EC Folders/EC06619 -NIAGARA 2018 TAKASHI/NL TESTING 2019/Low flowrate test/ECONET Data"
+#data_path2 = r'C:\Users\ian.jacobi\Documents\aaaa\niagra\lf'
+
 result_dir = path + '/prp/'
+for file in os.scandir(result_dir):
+	if file.name.startswith('R'):
+		os.unlink(file.path)
 binary_cols = ("FLM_ROD1", "FREEZING")
 instance_names = {
 	'1':"NL1283",
@@ -112,7 +120,38 @@ temp_cols = {
 	"in": "TEMP__IN",
 	"out": "TEMP_OUT"
 }
+cycles_per_day_group= {
+	'1':72,
+	'2':412,
+	'3':72,
+	'Low Flow':144
+}
 reliability = nr(n_steps = n_steps,target_cycles = target_cycles,diff_cycles = diff_cycles,groups = groups,station_names = station_names,flame_col = 'FLM_ROD1',temp_cols = temp_cols,instance_names = instance_names, zero_strs = zero_vals	, one_strs = one_vals, path= path, intended_cols = intended_cols, binary_cols = binary_cols)
 reliability.main(data_path, result_dir)
 reliability2 = nr(target_cycles = target_cycles,diff_cycles = diff_cycles,groups = groups2, station_names = station_names2,flame_col = 'FLM_ROD1',temp_cols = temp_cols,instance_names = instance_names_2, zero_strs = zero_vals, one_strs = one_vals, path= path, intended_cols = intended_cols, binary_cols = binary_cols)
 reliability2.main(data_path2, result_dir)
+for file in os.scandir(result_dir):
+	df = pd.read_csv(file.path, low_memory = False, parse_dates = ["Date"])
+	i = str(int(df["INSTANCE"].values.tolist()[0]))
+	if not df['Group'].values.tolist()[0] == 'Low Flow':
+		group = groups.get((i))
+		print(i)
+		df = df.append({'Date' : '','Cycles' : diff_cycles.get(station_names.get(i))}, ignore_index = True)
+		target = target_cycles.get(group)
+	else:
+		df = df.append({'Date' : '', 'Cycles' : int(diff_cycles.get(station_names2.get(str(i))))}, ignore_index = True)
+		group = groups2.get(str(i))
+		target = target_cycles.get(group)
+	running_count = df['Cycles'].cumsum()
+	print(running_count)
+	remaining = target - running_count.values.tolist()[-1]
+	df["Current Cycles"] = running_count
+	df['Remaining Cycles'] = remaining
+	df['Expected Cycles Per Day'] = cycles_per_day_group.get(group)
+	days_left = remaining/cycles_per_day_group.get(group)
+	date = (str(df["Date"].values.tolist()[-2]))
+	print(date)
+	date = parse(date)
+	est_date = df["Date"].values.tolist()[-3] + datetime.timedelta(days = int(days_left))
+	df["Estimated Completion"] = est_date
+	df.to_csv(file.path, index = False)

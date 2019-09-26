@@ -167,27 +167,30 @@ class Preprocessing_Base:
             except Exception as e:
                 continue
             
-            cols = df.columns
             colnames = df.columns.values.tolist()
             last_col = colnames[-12]
             digits = re.findall("\d+", colnames[-2])
             print(digits)
-            if digits == [] or len(cols) == min_cols:
-                if not (self.index_of_last_col == None):
-                    df = self.delete_cols(df)
+            if not (self.index_of_last_col == None):
+                df = self.delete_cols(df)
+            cols = df.columns
+            print(len(cols) == min_cols)
+            if len(cols) == min_cols or digits == []:
                 print(fileN)
                 try:
                     df.columns = self.intended_cols
-                   # self.format_cols(cols, df, fileN, result_dir, data_path)
+                    self.format_cols(cols, df, fileN, result_dir, data_path)
                 except Exception as e:
                     pass
 
-            elif(self.check_if_multiple(df, digits[-1])):
+            elif(self.check_if_multiple(df, digits[-1]) and len(digits) < 2):
+                print('fileN')
                 last_int = digits[-1]
                 self.format_multiple_cols(df, fileN, result_dir, data_path, 1, last_int)
         #Checks if file records multiple unique units, if it does return true
     def check_if_multiple(self, df, last_int):
         if(last_int.isdigit()):
+
             if(int(last_int) > 1):
                 return True
     def format_multiple_cols(self, df, fileN, result_dir, data_path, i, last_int):
