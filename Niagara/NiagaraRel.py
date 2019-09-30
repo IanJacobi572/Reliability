@@ -20,6 +20,8 @@ class Niagara_Reliability(pr.Preprocessing_Base):
 		self.diff_cycles = kwargs.get('diff_cycles')
 		self.target_cycles = kwargs.get('target_cycles')
 		self.groups = kwargs.get('groups')
+		self.start_weeks = kwargs.get('start_dates')
+		self.cycles_per_day_per_group = kwargs.get('cycles_per_day_group')
 		self.instance_names = kwargs.get('instance_names')
 	#import ipdb
 	def get_file_date(self, date):
@@ -57,25 +59,29 @@ class Niagara_Reliability(pr.Preprocessing_Base):
 			split_df.columns = intended_cols_i[:2] + [re.sub(r'_?[^A-Z_]+$', "", col) for col in intended_cols_i[2:]]
 			
 			split_df["INSTANCE"] = i
-			split_df = split_df.copy(self.intended_cols)
+			for col in self.intended_cols:
+				if not col in split_df.columns.values.tolist():
+					split_df[col] = ''
+			split_df = split_df[self.intended_cols].copy()
 			date = self.get_file_date(split_df["Date"].values.tolist()[-1])
 			print(i)
 			print(date)
 			split_df["Month"] = date.strftime('%B')
-			split_df['Unit_Name'] = self.instance_names.get(i)
+			split_df['Unit_Name'] = self.instance_names.get(str(i))
 			station = self.station_names.get(str(i))
 			split_df["Station"] = station
 			group = self.groups.get(str(i))
+			week =date.isocalendar()[1] - self.start_weeks.get(station)
 			split_df["Group"] = group
 			target = self.target_cycles.get(group)
+			target_for_week = self.cycles_per_day_per_group.get(group) * 7 * week
 			split_df["Target Cycles"] = target
+			split_df["Target Cycles of Week"] = target_for_week
 			self.binary_to_string(self.flame_col, split_df)
 			split_df["Location"] = "Nuevo Laredo"
 			split_df["Category"] = "Reliability"
 			split_df["Cycles"] = self.count_non_consec_flames(split_df)
-			a = (parse('2019-8-20'))
-			a = a.date()
-			print(date)
+			split_df["Week"] =  week
 			#print(split_df['Unit_Name'].values[1])
 			split_df["Delta_T"] = self.delta_t(self.temp_cols, split_df)
 
@@ -87,22 +93,23 @@ class Niagara_Reliability(pr.Preprocessing_Base):
 				split_df.to_csv(k, mode = 'a', index = False)
 		except Exception as e:
 			pass
+	def get_date_from_name(self, name):
+		split = name.split("_")
+		day = split[-1][:-4]
+		print(split)
+		date = parse(split[-3] + "-" + split[-2] + "-" + day)
+		return date.date() 
 	def find_different(self, data_path, result_dir):
 		already_processed = []    
 		file_names = []
-		##### Make sure to read only the csv files in directory
-		#with os.scandir(result_dir) as listOfEntries:
-			#for entry in listOfEntries:
-				#if entry.name[-12].isdigit():
-					#already_processed.append(entry.name[:-6] + ".csv")
-				#else : 
-					#already_processed.append(entry.name[:-5] + ".csv")
+		file_dates = []
 		with os.scandir(data_path) as listOfEntries:
 			for entry in listOfEntries:
-		# print all entries that are files
-				file_names.append(entry.name)
+				if entry.name.endswith('.csv'):
+					file_names.append(entry.name)
+					file_dates.append(self.get_date_from_name(entry.name))
 
-		file_names = sorted(list(set(file_names)))
+		file_names = [x for _,x in sorted(zip(file_dates, file_names))]
 		print(file_names)
 		return file_names
 	#when you have a manifold, consider them seperately, and split the file in hald
