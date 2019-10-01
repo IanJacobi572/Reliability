@@ -1,6 +1,8 @@
 import os
 import pandas as pd
 import sys
+from multiprocessing import Pool
+from math import ceil
 import numpy as np
 import datetime
 from dateutil.parser import *
@@ -124,14 +126,14 @@ cycles_per_day_group= {
 	'3':72,
 	'Low Flow':144
 }
-for file in os.scandir(data_path):
-	df = pd.read_csv(file.path, low_memory = False)
+def cycle_fnc(file):
+	df = pd.read_csv(file, low_memory = False)
 	i = str(int(df["INSTANCE"].values.tolist()[0]))
-	#print(parse(str(df['Date'].values.tolist()[0])).date().isocalendar())
-	#week1 = parse(df['Date'].values.tolist()[0]).date().isocalendar()[1]
+	#Flow GPM with sign for field, Timer for rel
 	#week = [parse(f).date().isocalendar()[1] - week1 for f in df['Date'].values.tolist() if type(f) is str]
-	df["Date"] = pd.to_datetime(df.Date, format = '%Y-%M-%d')
-	df["Time"] = pd.to_datetime(df.Time, format = '%H:%M:%S')
+	#df["Date"] = pd.to_datetime(df.Date, infer_datetime_format = True).dt.date
+	#df["Hour"] = pd.to_datetime(df.Time, infer_datetime_format = True).dt.hour
+	#df["Time"] = pd.to_datetime(df.Time, infer_datetime_format = True).dt.time
 	#df.sort_values(by = "Date", inplace = True)
 	#print(df['Cycles'].unique())
 	date = (str(df["Date"].values.tolist()[-2]))
@@ -151,12 +153,9 @@ for file in os.scandir(data_path):
 		target = target_cycles.get(group)
 	running_count = df['Cycles'].cumsum()
 	print(running_count)
-	start_of_week = [df.index[np.searchsorted(df.A,f)] for f in df.A.unique()]
-	for i in len(start_of_week):
-		previous_sum = df.iloc[0:start_of_week[i]].sum()
-		target_for_week = previous_sum + cycles_per_day_group.get(group)*7
-		df.iloc[start_of_week[i-1]:start_of_week[i], 'Target For Week'] = target_for_week
-	 
+	start_of_week = [df.index[np.searchsorted(df.Week,f)] for f in df. Week.unique()]
+	for i in start_of_week:
+		df.loc[i, 'Target For Week'] = running_count.loc[i] + cycles_per_day_group.get(group)*7
 	remaining = target - running_count.values.tolist()[-1]
 	df["Current Cycles"] = running_count
 	df['Remaining Cycles'] = remaining
@@ -164,6 +163,22 @@ for file in os.scandir(data_path):
 	df['Completion Percent'] = running_count.values.tolist()[-1]/target
 	days_left = remaining/cycles_per_day_group.get(group)
 	date = (date)
-	est_date = (df["Date"].values.tolist()[-3]) + datetime.timedelta(days = int(days_left))
+	est_date = (parse(df["Date"].values.tolist()[-3])).date() + datetime.timedelta(days = int(days_left))
 	df["Estimated Completion"] = est_date
-	df.to_csv(result_dir + '/' + file.name + '.csv', index = False)
+	df.to_csv(result_dir + '/' + df["Unit_Name"].values.tolist()[0] + '.csv', index = False)
+t = []
+files = [file.path for file in os.scandir(data_path)]
+print(files)
+if(__name__ == "__main__"):
+	pool = Pool()
+	pool.map(cycle_fnc, files)
+'''for i in range(0, ceil(len(files)/16)):
+	print('a')
+	t[i] = threading.Thread(target = cycle_loop(files, i), name = str(i))
+	t[i].start()
+
+for i in range(0, ceil(len(files)/16))[1:]:
+	t[i].join() 
+'''
+
+	

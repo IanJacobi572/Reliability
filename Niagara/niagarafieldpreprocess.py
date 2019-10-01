@@ -1,4 +1,5 @@
 import os
+from multiprocessing import Pool
 import sys
 sys.path.append(os.path.dirname(os.getcwd()))
 import Preprocessing_Niagara_Field as pr
@@ -23,6 +24,7 @@ temp_cols = {
 	"in": "TEMP__IN",
 	"out": "TEMP_OUT"
 }
-niagara = pr.Niagara_Field(flame_col = 'FLM_ROD1',temp_cols = temp_cols, from_path = True, intended_cols = intended_cols, path = path, binary_cols = binary_cols, zero_strs = zero_vals, one_strs = one_vals)
-for sub in subfolders:
-	niagara.main(sub, result_dir)
+niagara = pr.Niagara_Field(result_dir =result_dir,flame_col = 'FLM_ROD1',temp_cols = temp_cols, from_path = True, intended_cols = intended_cols, path = path, binary_cols = binary_cols, zero_strs = zero_vals, one_strs = one_vals)
+if(__name__ =='__main__'):
+	pool =Pool()
+	pool.map(niagara.main, subfolders)

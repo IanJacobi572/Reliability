@@ -12,6 +12,7 @@ class Niagara_Field(pr.Preprocessing_Base):
 	def __init__(self, **kwargs):
 		super(Niagara_Field, self).__init__(**kwargs)
 		self.flame_col = kwargs.get('flame_col')
+		self.result_dir = kwargs.get('result_dir')
 	def count_non_consec_flames(self, df):
 		successful_ignitions = []
 		cons = False
@@ -32,6 +33,15 @@ class Niagara_Field(pr.Preprocessing_Base):
 			split_df.columns = self.intended_cols[:-1]
 			self.del_row_with_dashes(split_df)
 			zero = np.array([0])
+
+			split_df["Current Cycles"] = 0
+			split_df['Remaining Cycles'] = 0
+			split_df['Expected Cycles Per Day'] = 0
+			split_df['Completion Percent'] =0
+			split_df["Week"] = 1
+			split_df["Target For Week"] = 0
+			est_date = ''
+			split_df["Estimated Completion"] = est_date
 			if not self.temp_cols == None:
 			    split_df["Delta_T"] = self.delta_t(self.temp_cols, split_df)
 			self.unit_name_multiple(data_path, split_df, i)
@@ -69,6 +79,15 @@ class Niagara_Field(pr.Preprocessing_Base):
 		if df.shape[0] > 1: #Ignore changing the files with only one row
 			cols = df.columns
 			df = df.drop("SW_VERSN", axis=1)
+			df["Current Cycles"] = 0
+			df["Week"] = 1
+
+			df["Target For Week"] = 0
+			df['Remaining Cycles'] = 0
+			df['Expected Cycles Per Day'] = 0
+			df['Completion Percent'] =0
+			est_date = ''
+			df["Estimated Completion"] = est_date
 			#retrieve unit name
 			if(self.from_path == True):
 				self.unit_name_from_path(data_path, df)
@@ -96,3 +115,8 @@ class Niagara_Field(pr.Preprocessing_Base):
 		else:
 			print("\n\n\n*******\n", fileN, " = not considered in analysis\n because it has only 1 line of data")
     #another main driving function of the module, meant to loop through the new files and process them
+	def main(self, data_path):
+		config_path = self.path + "/Config"
+		login_path = config_path + "/login.yaml"
+		path_path = config_path + "/path.yaml"
+		self.read_files(data_path, self.result_dir)

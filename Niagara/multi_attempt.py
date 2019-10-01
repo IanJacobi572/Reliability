@@ -2,7 +2,10 @@ import os
 import pandas as pd
 import sys
 import datetime
+from multiprocessing import Process, Pool
 from dateutil.parser import *
+import threading
+from math import ceil
 sys.path.append(os.path.dirname(os.getcwd()))
 from NiagaraRel import Niagara_Reliability as nr
 intended_cols = ["Time","Date","INSTANCE","TEMP__IN","TEMP_OUT","TEMPHTX1","TEMP_EXH","VOLU_CTL","FLOW_GPM","BYPRATIO","FAN__SPD","FLM_ROD1","ALARM_01"]
@@ -144,10 +147,52 @@ cycles_per_day_group= {
 	'3':72,
 	'Low Flow':144
 }
-reliability = nr(cycles_per_day_group =cycles_per_day_group,start_dates = start_dates,n_steps = n_steps,target_cycles = target_cycles,diff_cycles = diff_cycles,groups = groups,station_names = station_names,flame_col = 'FLM_ROD1',temp_cols = temp_cols,instance_names = instance_names, zero_strs = zero_vals	, one_strs = one_vals, path= path, intended_cols = intended_cols, binary_cols = binary_cols)
-reliability.main(data_path, result_dir)
-reliability2 = nr(cycles_per_day_group = cycles_per_day_group,start_dates = start_dates,target_cycles = target_cycles,diff_cycles = diff_cycles,groups = groups2, station_names = station_names2,flame_col = 'FLM_ROD1',temp_cols = temp_cols,instance_names = instance_names_2, zero_strs = zero_vals, one_strs = one_vals, path= path, intended_cols = intended_cols, binary_cols = binary_cols)
-reliability2.main(data_path2, result_dir)
+t = []
+r =[]
+reliability = nr(result_dir = result_dir,cycles_per_day_group =cycles_per_day_group,start_dates = start_dates,n_steps = n_steps,target_cycles = target_cycles,diff_cycles = diff_cycles,groups = groups,station_names = station_names,flame_col = 'FLM_ROD1',temp_cols = temp_cols,instance_names = instance_names, zero_strs = zero_vals	, one_strs = one_vals, path= path, intended_cols = intended_cols, binary_cols = binary_cols)
+#reliability.main(data_path, result_dir)
+files = [f for f in os.scandir(data_path)]
+paths = [path.path for path in files]
+begend = []
+if(__name__ == '__main__'):
+	try:
+		pool = Pool()
+		da_map = pool.map(reliability.main, paths)
+	finally:
+		pool.close()
+		pool.join()
+		for df_array in da_map:
+			try:
+				for df in df_array:
+					print(df['Unit_Name'].values.tolist()[0])
+					k = result_dir+'/'+df['Unit_Name'].values.tolist()[0]+ '.csv'
+					if(os.path.exists(k)):
+						print('a')
+						df.to_csv(k, mode = 'a', header = False, index = False)
+					else: 
+						df.to_csv(k, mode = 'a', index = False)
+			except:
+				pass
+'''for i in range(1, 17):
+for df in da_map:
+	k = result_dir+df['Unit Name'].values.tolist()[1]+ '.csv'
+	df.to_csv(k)
+	r.append(nr(cycles_per_day_group =cycles_per_day_group,start_dates = start_dates,n_steps = n_steps,target_cycles = target_cycles,diff_cycles = diff_cycles,groups = groups,station_names = station_names,flame_col = 'FLM_ROD1',temp_cols = temp_cols,instance_names = instance_names, zero_strs = zero_vals	, one_strs = one_vals, path= path, intended_cols = intended_cols, binary_cols = binary_cols))
+	starting = i-1
+	start = len(files)* starting
+	start = ceil(start/16 )
+	end = len(files) * i 
+	end = ceil(end/16)
+	begend.append(paths[start:end])
+	#t.append(Process(target = r[i-1].main(paths[start:end], result_dir, i), name = str(i)))
+	#Process(target = r[i-1].main(paths[start:end], result_dir, i), name = str(i)).start()
+	#print('a2')'''
+#print(threading.active_count())
+#t[0].start()
+#t[1].start()
+#t[2].start()
+#reliability2 = nr(cycles_per_day_group = cycles_per_day_group,start_dates = start_dates,target_cycles = target_cycles,diff_cycles = diff_cycles,groups = groups2, station_names = station_names2,flame_col = 'FLM_ROD1',temp_cols = temp_cols,instance_names = instance_names_2, zero_strs = zero_vals, one_strs = one_vals, path= path, intended_cols = intended_cols, binary_cols = binary_cols)
+#reliability2.main(data_path2, result_dir)
 '''for file in os.scandir(result_dir):
 	df = pd.read_csv(file.path, low_memory = False, parse_dates = ["Date"])
 	i = str(int(df["INSTANCE"].values.tolist()[0]))
