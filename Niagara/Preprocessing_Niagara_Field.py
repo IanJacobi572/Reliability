@@ -3,6 +3,7 @@ import yaml
 from tkinter import messagebox, Label, Button, FALSE, Tk, Entry, Checkbutton, BooleanVar, StringVar
 import os
 import re
+from datetime import datetime
 from set_config import set_config
 from ftplib import FTP
 from num2words import num2words
@@ -40,7 +41,7 @@ class Niagara_Field(pr.Preprocessing_Base):
 			split_df['Completion Percent'] =0
 			split_df["Week"] = 1
 			split_df["Target For Week"] = 0
-			est_date = ''
+			est_date = datetime.now()
 			split_df["Estimated Completion"] = est_date
 			if not self.temp_cols == None:
 			    split_df["Delta_T"] = self.delta_t(self.temp_cols, split_df)
@@ -81,6 +82,7 @@ class Niagara_Field(pr.Preprocessing_Base):
 			df = df.drop("SW_VERSN", axis=1)
 			df["Current Cycles"] = 0
 			df["Week"] = 1
+			df["Average Cycles"] = 0
 
 			df["Target For Week"] = 0
 			df['Remaining Cycles'] = 0

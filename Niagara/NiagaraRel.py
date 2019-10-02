@@ -1,3 +1,4 @@
+
 import Preprocessing as pr
 import yaml
 from tkinter import messagebox, Label, Button, FALSE, Tk, Entry, Checkbutton, BooleanVar, StringVar
@@ -84,13 +85,11 @@ class Niagara_Reliability(pr.Preprocessing_Base):
 			split_df["Week"] =  week
 			#print(split_df['Unit_Name'].values[1])
 			split_df["Delta_T"] = self.delta_t(self.temp_cols, split_df)
-
-			k = result_dir+"\\R"+ self.instance_names.get(str(i)) +".csv"
-			if(os.path.exists(k)):
-				print('a')
-				split_df.to_csv(k, mode = 'a', header = False, index = False)
-			else: 
-				split_df.to_csv(k, mode = 'a', index = False)
+			k = result_dir+"\\"+ self.instance_names.get(str(i))
+			if not os.path.exists(k):
+				os.mkdir(k)
+			split_df.to_csv(k+'/'+date.strftime('%Y-%m-%d')+'.csv', index = False)
+												
 		except Exception as e:
 			pass
 	def get_date_from_name(self, name):
@@ -122,14 +121,9 @@ class Niagara_Reliability(pr.Preprocessing_Base):
 			
 			self.create_multiple_file( df, result_dir, fileN, i, intended_cols_i )
 	def read_files(self, data_path, result_dir):
-		file_names = self.find_different(data_path, result_dir)
-		for fileN in file_names:
-		#create df
-			try:
-				df = pd.read_csv(data_path + "\\" + fileN, low_memory = False)      
-			except Exception as e:
-				continue
-
+		fileN = data_path
+		if fileN.endswith('.csv'):
+			df = pd.read_csv(data_path, low_memory = False)
 
 			cols = df.columns
 			colnames = df.columns.values.tolist()
@@ -140,3 +134,5 @@ class Niagara_Reliability(pr.Preprocessing_Base):
 		#ipdb.set_trace()
 	def main(self, data_path, result_dir):
 		self.read_files(data_path, result_dir)
+
+

@@ -1,7 +1,9 @@
 import os
 import pandas as pd
 import sys
+from multiprocessing import Pool
 import datetime
+from functools import partial
 from dateutil.parser import *
 sys.path.append(os.path.dirname(os.getcwd()))
 from NiagaraRel import Niagara_Reliability as nr
@@ -31,9 +33,8 @@ start_dates = {
 	
 }
 result_dir = r'C:\Niagara\prpbeforecycles'
-for file in os.scandir(result_dir):
-	if file.name.startswith('R'):
-		os.unlink(file.path)
+#for file in os.scandir(result_dir):#
+#	os.unlink(file.path)
 binary_cols = ("FLM_ROD1", "FREEZING")
 instance_names = {
 	'1':"NL1283",
@@ -144,35 +145,14 @@ cycles_per_day_group= {
 	'3':72,
 	'Low Flow':144
 }
+files = [f.path for f in os.scandir(data_path) if (f.path.endswith('.csv'))]
+files2 = [f.path for f in os.scandir(data_path2) if (f.path.endswith('.csv'))]
 reliability = nr(cycles_per_day_group =cycles_per_day_group,start_dates = start_dates,n_steps = n_steps,target_cycles = target_cycles,diff_cycles = diff_cycles,groups = groups,station_names = station_names,flame_col = 'FLM_ROD1',temp_cols = temp_cols,instance_names = instance_names, zero_strs = zero_vals	, one_strs = one_vals, path= path, intended_cols = intended_cols, binary_cols = binary_cols)
-reliability.main(data_path, result_dir)
 reliability2 = nr(cycles_per_day_group = cycles_per_day_group,start_dates = start_dates,target_cycles = target_cycles,diff_cycles = diff_cycles,groups = groups2, station_names = station_names2,flame_col = 'FLM_ROD1',temp_cols = temp_cols,instance_names = instance_names_2, zero_strs = zero_vals, one_strs = one_vals, path= path, intended_cols = intended_cols, binary_cols = binary_cols)
-reliability2.main(data_path2, result_dir)
-'''for file in os.scandir(result_dir):
-	df = pd.read_csv(file.path, low_memory = False, parse_dates = ["Date"])
-	i = str(int(df["INSTANCE"].values.tolist()[0]))
-	week1 = df['Date'].values.tolist()[0].date.isocalender()[1]
-	week = [f.date.isocalender()[1] - week1 for f in df['Date'].values.tolist()]
 
-	if not df['Group'].values.tolist()[0] == 'Low Flow':
-		group = groups.get((i))
-		print(i)
-		df = df.append({'Date' : '','Cycles' : diff_cycles.get(station_names.get(i))}, ignore_index = True)
-		target = target_cycles.get(group)
-	else:
-		df = df.append({'Date' : '', 'Cycles' : int(diff_cycles.get(station_names2.get(str(i))))}, ignore_index = True)
-		group = groups2.get(str(i))
-		target = target_cycles.get(group)
-	running_count = df['Cycles'].cumsum()
-	print(running_count)
-	remaining = target - running_count.values.tolist()[-1]
-	df["Current Cycles"] = running_count
-	df['Remaining Cycles'] = remaining
-	df['Expected Cycles Per Day'] = cycles_per_day_group.get(group)
-	days_left = remaining/cycles_per_day_group.get(group)
-	date = (str(df["Date"].values.tolist()[-2]))
-	print(date)
-	date = parse(date)
-	est_date = df["Date"].values.tolist()[-3] + datetime.timedelta(days = int(days_left))
-	df["Estimated Completion"] = est_date
-	df.to_csv(file.path, index = False)'''
+p = partial(reliability.main,result_dir = result_dir)
+p2 = partial(reliability2.main,result_dir = result_dir)
+if __name__ == '__main__':
+	pool = Pool()
+	pool.map(p, files)
+	pool.map(p2,files2)

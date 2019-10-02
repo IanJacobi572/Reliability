@@ -126,18 +126,16 @@ cycles_per_day_group= {
 	'3':72,
 	'Low Flow':144
 }
-def cycle_fnc(file):
-	df = pd.read_csv(file, low_memory = False)
+def cycle_fnc(directory):
+	df = pd.concat([pd.read_csv(file, low_memory = False) for file in os.scandir(directory)], ignore_index = True)
 	i = str(int(df["INSTANCE"].values.tolist()[0]))
 	#Flow GPM with sign for field, Timer for rel
 	#week = [parse(f).date().isocalendar()[1] - week1 for f in df['Date'].values.tolist() if type(f) is str]
-	#df["Date"] = pd.to_datetime(df.Date, infer_datetime_format = True).dt.date
+	df["Date"] = pd.to_datetime(df.Date, infer_datetime_format = True).dt.date
 	#df["Hour"] = pd.to_datetime(df.Time, infer_datetime_format = True).dt.hour
 	#df["Time"] = pd.to_datetime(df.Time, infer_datetime_format = True).dt.time
-	#df.sort_values(by = "Date", inplace = True)
+	df.sort_values(by = "Date", inplace = True)
 	#print(df['Cycles'].unique())
-	date = (str(df["Date"].values.tolist()[-2]))
-	print(date)
 	if not df['Group'].values.tolist()[0] == 'Low Flow':
 		group = groups.get((i))
 		station = station_names.get(str(i))
@@ -162,8 +160,7 @@ def cycle_fnc(file):
 	df['Expected Cycles Per Day'] = cycles_per_day_group.get(group)
 	df['Completion Percent'] = running_count.values.tolist()[-1]/target
 	days_left = remaining/cycles_per_day_group.get(group)
-	date = (date)
-	est_date = (parse(df["Date"].values.tolist()[-3])).date() + datetime.timedelta(days = int(days_left))
+	est_date = ((df["Date"].values.tolist()[-3])) + datetime.timedelta(days = int(days_left))
 	df["Estimated Completion"] = est_date
 	df.to_csv(result_dir + '/' + df["Unit_Name"].values.tolist()[0] + '.csv', index = False)
 t = []
