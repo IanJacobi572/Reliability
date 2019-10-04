@@ -40,7 +40,7 @@ class Gen5_Rel(pr.Preprocessing_Base):
 			print()
 			station = self.station_names.get(instance)
 			split_df["Station"] = station
-			k = result_dir+"\\" + name + "\\"
+			k = result_dir+"\\" + name + "_"+ station + '\\'
 			if not os.path.exists(k):
 				os.makedirs(k)
 				print(k)
