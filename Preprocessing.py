@@ -256,17 +256,10 @@ class Preprocessing_Base:
         except Exception as e:
             pass
     def unit_name(self, cols, file_n, df):
-        if len(cols) == len(self.intended_cols):
-            # Add the Unit_Names for the file_names
-            unitName = file_n.split("_")[0]
-            df["Unit_Name"] = unitName.upper()
-        else:
-            df = df.drop(df.columns[len(self.intended_cols):],axis=1)
-            # Add the Unit_Names for the file_names
-            unitName = file_n.split("_")[0]
-            df["Unit_Name"] = unitName.upper()
-        return unitName
-        #//
+        # Add the Unit_Names for the file_names
+        unitName = file_n.split("_")[0].split('\\')[-1]
+        print(unitName)
+        df["Unit_Name"] = unitName.upper()
     #sets values to string for entire column
     def df_to_string(self, column, df):
         #alarm strin
