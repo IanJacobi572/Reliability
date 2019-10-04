@@ -6,7 +6,9 @@ def tdms_extract(entry):
                 tdms_file = TdmsFile(entry)
                 for group in tdms_file.groups():
                     data = tdms_file.object(group).as_dataframe()
-                    if(group == 'Channels'):
+                    if group == 'Events':
+                        data["TimeStamp"] = data["TimeStamp"].astype(float).values - float(data["TimeStamp"].values[0])
+                    if group == 'Channels':
                         data["TimeStamp (sec)"] = data["TimeStamp (sec)"].values - data["TimeStamp (sec)"].values[0]
                     if not os.path.exists('C:/Niagara/UEF/' + group):
                         os.makedirs('C:/Niagara/UEF/' + group)
