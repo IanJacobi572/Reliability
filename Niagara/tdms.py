@@ -17,7 +17,7 @@ def tdms_extract(entry):
                 name = entry.split('\\')[-1]
                 data.to_csv('C:/Niagara/UEF/' +group + "/" + name[:-5] +".csv")
     except Exception as e:
-        raise e
+        pass
 data_path = '//onerheem/whd-onerheemdfs/Data2 on WM1FSPROD02/PDP/PROJECT FOLDERS/TNK PROJECTS/Proj EC06619/R&D/Development/DOE test'
 files = [f.path for f in os.scandir(data_path) if f.name.endswith('tdms')]
 subfolders = [f.path for f in os.scandir(data_path) if f.is_dir()]    
