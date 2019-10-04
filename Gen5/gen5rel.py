@@ -40,10 +40,11 @@ class Gen5_Rel(pr.Preprocessing_Base):
 			print()
 			station = self.station_names.get(instance)
 			split_df["Station"] = station
-			k = result_dir+"\\" + name + "_" + station + ".csv"
+			k = result_dir+"\\" + name + "\\"
+			if not os.path.exists(k):
+				os.makedirs(k)
+				print(k)
 			sig = name + "/" + date_str
-			split_df["Unit_Name"] = name
-			split_df["Sig"] = sig
 			split_df.fillna('')
 			#if split_df["Date"].values.tolist()[1] in df_result["Date"]:
 				#print('aaaa')
@@ -58,11 +59,7 @@ class Gen5_Rel(pr.Preprocessing_Base):
 			date = self.get_file_date(split_df["Date"].values.tolist()[1])
 			split_df["Month"] = date.strftime('%B')
 			#start_date = parse('2019-7-8').date()
-
-			if os.path.exists(k):
-					split_df.to_csv(k, mode = 'a', header = False, index = False)
-			else:
-				split_df.to_csv(k, index = False)
+			split_df.to_csv(k + date_str.replace('/','_') + ".csv")
 		except Exception as e:
 			if fileN == 'Rel_2019_8_10.csv':
 				raise e
@@ -73,28 +70,28 @@ class Gen5_Rel(pr.Preprocessing_Base):
 		min_cols = len(self.intended_cols)
 
 		#find differences between directories
-		file_names = self.find_different(data_path, result_dir)
-		for fileN in file_names:
-			#create df
+		fileN = data_path
+		#create df
+		if(fileN.endswith('csv')):
 			try:
-				df = pd.read_csv(data_path + "\\" + fileN)      
-			except Exception as e:
-				continue
+				df = pd.read_csv(fileN, low_memory = False) 
+			 
+				
+				cols = df.columns
+				colnames = df.columns.values.tolist()
+				last_col = colnames[-12]
+				digits = re.findall("\d+", colnames[-2])
+				if digits == [] or len(cols) == min_cols:
+					if not (self.index_of_last_col == None):
+						df = self.delete_cols(df)
+					try:
+						df.columns = self.intended_cols
+						self.format_cols(cols, df, fileN, result_dir, data_path)
+					except Exception as e:
+						pass
 
-			
-			cols = df.columns
-			colnames = df.columns.values.tolist()
-			last_col = colnames[-12]
-			digits = re.findall("\d+", colnames[-2])
-			if digits == [] or len(cols) == min_cols:
-				if not (self.index_of_last_col == None):
-					df = self.delete_cols(df)
-				try:
-					df.columns = self.intended_cols
-					self.format_cols(cols, df, fileN, result_dir, data_path)
-				except Exception as e:
-					pass
-
-			elif(self.check_if_multiple(df, digits[-1])):
-				last_int = digits[-1]
-				self.format_multiple_cols(df, fileN, result_dir, data_path, 1, last_int)
+				elif(self.check_if_multiple(df, digits[-1])):
+					last_int = digits[-1]
+					self.format_multiple_cols(df, fileN, result_dir, data_path, 1, last_int)     
+			except:
+				pass
