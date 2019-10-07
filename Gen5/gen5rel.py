@@ -37,7 +37,7 @@ class Gen5_Rel(pr.Preprocessing_Base):
 			print(i)
 			date_str = split_df["Date"].values.tolist()[1]
 			name = self.instance_names.get(instance)
-			split_df['Unit Name'] = name
+			split_df['Unit_Name'] = name
 			station = self.station_names.get(instance)
 			split_df["Station"] = station
 			k = result_dir+"\\" + name + "_"+ station + '\\'
