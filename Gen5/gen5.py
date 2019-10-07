@@ -81,7 +81,7 @@ gen_out.main(data_path, result_dir)
 p_out = partial(gen_out.main,result_dir = result_dir)
 def join(directory):
 	df = pd.concat([pd.read_csv(file, low_memory = False) for file in os.scandir(directory)], ignore_index = True)
-	df.to_csv(joined_dir + '/' + directory.split('\\')[-1] + '.csv')
+	df.to_csv(joined_dir + '/' + directory.split('\\')[-1] + '.csv', index = False)
 if __name__ == '__main__':
 	pool = Pool()
 	for sub in subfolders:	
