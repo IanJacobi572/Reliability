@@ -2,9 +2,8 @@
 import os
 import yaml
 from ftplib import FTP
-from keyboard import is_pressed # using module keyboard
 from tkinter import messagebox, Label, Button, FALSE, Tk, Entry, Checkbutton, BooleanVar, StringVar
-from progress.spinner import Spinner
+
 from tkinter.filedialog import askdirectory
 class set_config:
     def __init__(self, config_path):
