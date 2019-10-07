@@ -2,6 +2,7 @@ import os
 from multiprocessing import Pool
 import sys
 sys.path.append(os.path.dirname(os.getcwd()))
+sys.path.append(os.getcwd())
 import Preprocessing_Niagara_Field as pr
 import os
 #lifetime_val_cols = ("IGN_FIGN", "IGN_FFLM", "WTR_USED", "GAS_KBTU")

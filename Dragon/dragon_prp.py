@@ -1,4 +1,6 @@
-
+import os
+import sys
+sys.path.append(os.getcwd())
 import Preprocessing as pr
 import yaml
 from tkinter import messagebox, Label, Button, FALSE, Tk, Entry, Checkbutton, BooleanVar, StringVar

@@ -7,6 +7,7 @@ import numpy as np
 import datetime
 from dateutil.parser import *
 sys.path.append(os.path.dirname(os.getcwd()))
+from NiagaraRel import Niagara_Reliability as nr
 intended_cols = ("Time","Date","INSTANCE","TEMP__IN","TEMP_OUT","TEMPHTX1","TEMP_EXH","VOLU_CTL","FLOW_GPM","BYPRATIO","FAN__SPD","FLM_ROD1","ALARM_01")
 path = 'C:/Niagara'
 data_path = r"C:\Niagara\prpbeforecycles"

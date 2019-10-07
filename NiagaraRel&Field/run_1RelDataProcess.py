@@ -5,7 +5,7 @@ from multiprocessing import Pool
 import datetime
 from functools import partial
 from dateutil.parser import *
-sys.path.append(os.path.dirname(os.getcwd()))
+sys.path.append((os.getcwd()))
 from NiagaraRel import Niagara_Reliability as nr
 intended_cols = ["Time","Date","INSTANCE","TEMP__IN","TEMP_OUT","TEMPHTX1","TEMP_EXH","VOLU_CTL","FLOW_GPM","BYPRATIO","FAN__SPD","FLM_ROD1","ALARM_01"]
 path = 'C:/Niagara'

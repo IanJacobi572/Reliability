@@ -37,7 +37,7 @@ class Gen5_Rel(pr.Preprocessing_Base):
 			print(i)
 			date_str = split_df["Date"].values.tolist()[1]
 			name = self.instance_names.get(instance)
-			print()
+			split_df['Unit Name'] = name
 			station = self.station_names.get(instance)
 			split_df["Station"] = station
 			k = result_dir+"\\" + name + "_"+ station + '\\'
@@ -59,7 +59,7 @@ class Gen5_Rel(pr.Preprocessing_Base):
 			date = self.get_file_date(split_df["Date"].values.tolist()[1])
 			split_df["Month"] = date.strftime('%B')
 			#start_date = parse('2019-7-8').date()
-			split_df.to_csv(k + date_str.replace('/','_') + ".csv")
+			split_df.to_csv(k + date_str.replace('/','_') + ".csv", index= False)
 		except Exception as e:
 			if fileN == 'Rel_2019_8_10.csv':
 				raise e
