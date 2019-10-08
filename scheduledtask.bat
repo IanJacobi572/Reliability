@@ -1,10 +1,5 @@
 call C:/users/ian.jacobi/anaconda/Scripts/activate.bat
-call cd C:\Users\ian.jacobi\Documents\Python_Scripts\preprocessing_rheem
+call C:\Users\ian.jacobi\Documents\Python_Scripts\Reliability
 call conda activate dragon
-call python Dragon_data.py
-call python downloadati.py
-call python niagarafieldpreprocess.py
-call python RelDataProcess.py
-pause
-
+call python main.py
 pause
