@@ -2,6 +2,7 @@ import pandas as pd
 import os
 from multiprocessing import Pool
 from nptdms import TdmsFile
+
 def tdms_extract(entry):
     try:
         if(entry.endswith('.tdms')):
@@ -16,7 +17,7 @@ def tdms_extract(entry):
                     os.makedirs('C:/Niagara/UEF/' + group)
                 name = entry.split('\\')[-1]
                 data.to_csv('C:/Niagara/UEF/' +group + "/" + name[:-5] +".csv")
-    except Exception as e:
+    except:
         pass
 data_path = '//onerheem/whd-onerheemdfs/Data2 on WM1FSPROD02/PDP/PROJECT FOLDERS/TNK PROJECTS/Proj EC06619/R&D/Development/DOE test'
 files = [f.path for f in os.scandir(data_path) if f.name.endswith('tdms')]
