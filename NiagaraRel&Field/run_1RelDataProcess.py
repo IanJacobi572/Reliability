@@ -11,7 +11,7 @@ intended_cols = ["Time","Date","INSTANCE","TEMP__IN","TEMP_OUT","TEMPHTX1","TEMP
 path = 'C:/Niagara'
 data_path = "//onerheem/whd-onerheemdfs/Data on BDATAPROD2/RDDEPT/Satellite Lab/Reliability EC Folders/EC06619 -NIAGARA 2018 TAKASHI/NL TESTING 2019/ECONET Data"
 #data_path =  r'C:\Users\ian.jacobi\Documents\aaaa\niagra\RelData'
-data_path2 = "F:/Data on BDATAPROD2/RDDEPT/Satellite Lab/Reliability EC Folders/EC06619 -NIAGARA 2018 TAKASHI/NL TESTING 2019/Low flowrate test/ECONET Data"
+data_path2 = "H:/RDDEPT/Satellite Lab/Reliability EC Folders/EC06619 -NIAGARA 2018 TAKASHI/NL TESTING 2019/Low flowrate test/ECONET Data"
 #data_path2 = r'C:\Users\ian.jacobi\Documents\aaaa\niagra\lf'
 start_dates = {
 	'G9' : datetime.date(2019, 4, 4).isocalendar()[1],
