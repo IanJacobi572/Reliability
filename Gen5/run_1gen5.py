@@ -3,6 +3,7 @@ from datetime import datetime
 import pandas as pd
 import sys
 sys.path.append(os.path.dirname(os.getcwd()))
+sys.path.append(os.getcwd())
 import gen5rel as pr 
 from multiprocessing import Pool
 from functools import partial

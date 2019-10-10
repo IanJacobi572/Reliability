@@ -18,9 +18,47 @@ import numpy as np
 class Dragon(pr.Preprocessing_Base):
 	def __init__(self, **kwargs):
 		super(Dragon, self).__init__(**kwargs) 
+		self.city = kwargs.get('city')
+		self.category = kwargs.get('category')
+		self.rename_cols = kwargs.get('rename_cols')
+		self.short_desc = kwargs.get('short_desc')
+	def split_alarms(self, df):
+		groups = df.groupby('ALARMH01').groups
+		df["Alarm Code"]=''
+		df["Alarm Description"] = ''
+		df["Short Description"]=''
+		df["Alarm Time"]=''
+		df["Alarm Date"]=''
+		for key in groups:
+			idx = groups.get(key)[0]
+			row = df.loc[idx].copy()
+			alarm = row.ALARMH01            
+			delim = ' '
+			delimited = alarm.split(' ')
+			if len(delimited) > 1:
+				alarm_date = delimited[1]
+				alarm_time= parse(delimited[0]).time()
+
+				if(parse(row.Date.replace('/','-')) == parse(alarm_date.replace('/','-'))):
+					long = delim.join(delimited[3:]).strip()
+					alarm_code = delimited[2] 
+					short = self.short_desc.get(alarm_code)
+					row["Alarm Description"] = long
+					row["Short Description"] = short
+					row['Alarm Time'] = alarm_time
+					row["Alarm Date"] = alarm_date
+					row["Alarm Code"] = alarm_code
+					df.loc[idx]=row
+
 	def create_file(self, result_dir, fileN, df):
 		resultFrame = df    
 		if resultFrame.shape[0] > 0:
+			name = df["Unit_Name"].values.tolist()[0]
+			df.rename(columns=self.rename_cols, inplace = True)
+			print(df.columns)
+			self.split_alarms(df)
+			df["City"] = self.city.get(name)
+			df["Category"] = self.category.get(name)
 			k = result_dir+"\\"+df['Unit_Name'].values.tolist()[0] +'_'+ df['Date'].values.tolist()[0].replace('/', '_') +"_.csv"
 			resultFrame.to_csv(k)
 	def read_files(self, data_path, result_dir):
@@ -54,6 +92,5 @@ class Dragon(pr.Preprocessing_Base):
 			#Checks if file records multiple unique units, if it does return true
 		except Exception as e:
 			pass
-		
 	def main(self, data_path, result_dir):
 		self.read_files(data_path, result_dir)
