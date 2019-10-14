@@ -16,7 +16,7 @@ data_path = 'C:/dragon/DragonFieldTest'
 #intended_cols = prp.find_intended_cols(data_path, path, index_of_last_col)
 category ={
 	"ICN10235":"Reliability",
-	"ICN10235":"Reliability",
+	"ICN10236":"Reliability",
 	"ICN10244":"Reliability",
 	"ICN10213":"Reliability",
 	"ICN10221":"Reliability",
@@ -28,6 +28,11 @@ category ={
 	"ICN10219":"Field",
 	"ICN10230":"Field",
 	"ICN10220":"Field"
+}
+
+typos = {'102221' : '10221',
+	'10228-1':'10228',
+	'1024':'10234'
 }
 rename_cols={
 	"CHANNEL4-1": "Comb_Temp_OM(F)",
@@ -84,7 +89,7 @@ cols_to_fix = ("CHE_BMIN", "CHE_GALS", "CHE_SIGN", "CHE_FIGN", "CHEFFAIL")
 deviation_cols = ("CHE_BPDV", "CHE_FCDV")
 min_cols = 27
 
-dragon = pr.Dragon(category = category, rename_cols = rename_cols, short_desc = short_desc, city = city, path = path, alarm_name = alarm_name, index_of_last_col = index_of_last_col, intended_cols = intended_cols,  cols_to_fix = cols_to_fix, deviation_cols = deviation_cols)
+dragon = pr.Dragon(typos = typos, category = category, rename_cols = rename_cols, short_desc = short_desc, city = city, path = path, alarm_name = alarm_name, index_of_last_col = index_of_last_col, intended_cols = intended_cols,  cols_to_fix = cols_to_fix, deviation_cols = deviation_cols)
 p = partial(dragon.main, result_dir = resultdir)
 if __name__ == '__main__':
 	dl = prp.from_ftp(str_date_start = '2019-6-1', path = path, remote_path=remote_path, ftp =ftp, start_str ="ICN")

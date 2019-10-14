@@ -18,10 +18,18 @@ import numpy as np
 class Dragon(pr.Preprocessing_Base):
 	def __init__(self, **kwargs):
 		super(Dragon, self).__init__(**kwargs) 
+		self.typos = kwargs.get('typos')
 		self.city = kwargs.get('city')
 		self.category = kwargs.get('category')
 		self.rename_cols = kwargs.get('rename_cols')
 		self.short_desc = kwargs.get('short_desc')
+	def unit_name(self, cols, file_n, df):
+        # Add the Unit_Names for the file_name
+        unitName = file_n.split("_")[0].split('\\')[-1]
+        if unitName in self.typos:
+        	unitName = typos.get(untiName)
+        print(unitName)
+        df["Unit_Name"] = unitName.upper()
 	def split_alarms(self, df):
 		groups = df.groupby('ALARMH01').groups
 		df["Alarm Code"]=''
