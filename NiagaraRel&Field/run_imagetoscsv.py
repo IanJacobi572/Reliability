@@ -38,8 +38,17 @@ df["Station"]=''
 for sub in subdirs:
     print(sub)
     for image_file in os.scandir(sub):
-        if image_file.path.endswith('.JPG'):
-            with open(image_file.path, "rb") as f:
+        if image_file.path.endswith('.JPG'):    
+            basewidth = 300
+            img = Image.open(image_file.path)
+            wpercent = (basewidth/float(img.size[0]))
+            hsize = int((float(img.size[1])*float(wpercent)))
+            img = img.resize((basewidth,hsize), Image.ANTIALIAS)
+            resizedir = r'C:/Niagara/resized/'
+            if not os.path.exists(resizedir):
+                os.makedirs(resizedir)
+            img.save(resizedir+ image_file.name)
+            with open(resizedir + image_file.name, "rb") as f:
                 data = f.read()
                 img_data = (codecs.encode(obj = data, encoding = "base64"))
                 data = "data:image/jpeg;base64," + img_data.decode('utf-8')
@@ -52,7 +61,4 @@ for sub in subdirs:
                         'Image':data,
                         'Group' : groups.get(name)}
                 df = df.append(dataset, ignore_index = True)
-
-with open("saved.jpg", "wb") as fh:
-    fh.write(base64.decodebytes(img_data))
 df.to_csv(r'C:\Niagara\g.csv', index = False)
