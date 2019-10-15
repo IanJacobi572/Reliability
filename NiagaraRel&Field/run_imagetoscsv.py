@@ -3,11 +3,14 @@ from PIL import Image
 from numpy import array, moveaxis, indices, dstack
 import pandas as pd
 import os
+import re
 import base64
 import codecs
 image_path = r'H:\RDDEPT\Satellite Lab\Reliability EC Folders\EC06619 -NIAGARA 2018 TAKASHI\NL TESTING 2019\Photos\2.-Test Time\Thermal Pictures'
 subdirs = [f.path for f in os.scandir(image_path) if f.is_dir()]
 groups =  {
+    "E11":'1',
+
     'E9':"1",
     'E8':"1",
     'G12':"2",
@@ -42,10 +45,12 @@ for sub in subdirs:
                 data = "data:image/jpeg;base64," + img_data.decode('utf-8')
                 #data = data[1:].replace("'", "")
                 print(len(data))
-                dataset = {'Station': image_file.name[:-4].replace('-1', ''),
+                name =re.sub(r'-.*', "", image_file.name[:-4])
+                print(name)
+                dataset = {'Station': name,
                         'Date':sub.split('\\')[-1],
                         'Image':data,
-                        'Group' : groups.get(image_file.name[:-4].replace('-1', ''))}
+                        'Group' : groups.get(name)}
                 df = df.append(dataset, ignore_index = True)
 
 with open("saved.jpg", "wb") as fh:
