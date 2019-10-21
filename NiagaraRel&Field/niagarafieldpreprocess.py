@@ -19,7 +19,7 @@ intended_cols = ("Time","Date","TEMP__IN","TEMP_OUT","TEMPHTX1","TEMP_EXH","VOLU
 
 path = 'C:/Niagara'
 data_path = 'C:/Niagara/FieldTest'
-result_dir = 'c:/niagara/prpfield'
+result_dir = 'c:/niagara/prp'
 subfolders = [f.path for f in os.scandir(data_path) if f.is_dir() ]    
 temp_cols = {
 	"in": "TEMP__IN",
