@@ -30,9 +30,11 @@ category ={
 	"ICN10220":"Field"
 }
 
-typos = {'102221' : '10221',
-	'10228-1':'10228',
-	'1024':'10234'
+typos = {
+  'ICN' : 'ICN10234',
+  'ICN102221' : 'ICN10221',
+	'ICN10228-1':'ICN10228',
+	'ICN1024':'ICN10234'
 }
 rename_cols={
 	"CHANNEL4-1": "Comb_Temp_OM(F)",
