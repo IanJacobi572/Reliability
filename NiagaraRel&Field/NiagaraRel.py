@@ -84,6 +84,12 @@ class Niagara_Reliability(pr.Preprocessing_Base):
 			split_df["Location"] = "Nuevo Laredo"
 			split_df["Category"] = "Reliability"
 			split_df["Cycles"] = self.count_non_consec_flames(split_df)
+			if station == 'H9' or station == "H8":
+				cycles_df = split_df.loc[split_df.Cycles == 1].copy()
+
+				cycles_df["Distance"] =  np.append(0, np.ediff1d(cycles_df.index))
+				split_df.Cycles = 0 
+				split_df["Cycles"] = len(split_df.loc[cycles_df.loc[(cycles_df.Distance < 50) == (cycles_df.Distance > 20)].index, "Cycles"])
 			split_df["Week"] =  week
 			#print(split_df['Unit_Name'].values[1])
 			split_df["Delta_T"] = self.delta_t(self.temp_cols, split_df)
