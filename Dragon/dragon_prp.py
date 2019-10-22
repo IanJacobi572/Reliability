@@ -33,6 +33,7 @@ class Dragon(pr.Preprocessing_Base):
 	def split_alarms(self, df):
 		groups = df.groupby('ALARMH01').groups
 		df["Alarm Code"]=''
+		df['Failed Attempts'] = 0
 		df["Alarm Description"] = ''
 		df["Short Description"]=''
 		df["Alarm Time"]=''
@@ -50,19 +51,24 @@ class Dragon(pr.Preprocessing_Base):
 				if(parse(row.Date.replace('/','-')) == parse(alarm_date.replace('/','-'))):
 					long = delim.join(delimited[3:]).strip()
 					alarm_code = delimited[2] 
-					short = self.short_desc.get(alarm_code)
-					row["Alarm Description"] = long
-					row["Short Description"] = short
-					row['Alarm Time'] = alarm_time
-					row["Alarm Date"] = alarm_date
-					row["Alarm Code"] = alarm_code
-					df.loc[idx]=row
+					if alarm_code != "A029":
+						short = self.short_desc.get(alarm_code)
+						row["Alarm Description"] = long
+						row["Short Description"] = short
+						row['Alarm Time'] = alarm_time
+						row["Alarm Date"] = alarm_date
+						row["Alarm Code"] = alarm_code
+						df.loc[idx]=row
+					else:
+						df.loc[idx, 'Failed Attempts']=1
 
 	def create_file(self, result_dir, fileN, df):
 		resultFrame = df    
 		if resultFrame.shape[0] > 0:
 			name = df["Unit_Name"].values.tolist()[0]
 			df.rename(columns=self.rename_cols, inplace = True)
+			time =  pd.to_datetime(df["Time"])
+			df['Hours']=time.dt.hour
 			print(df.columns)
 			self.split_alarms(df)
 			df["City"] = self.city.get(name)
