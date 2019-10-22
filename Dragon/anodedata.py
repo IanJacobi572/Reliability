@@ -22,6 +22,7 @@ def process(data):
 		df["Date"]=date
 		columns = [col.replace('"','') for col in df.columns]
 		df.columns = columns
+		df["TIME"] = pd.to_datetime(df["TIME"])
 		for col in df.columns:
 		    digits.append( re.findall("\d+", col))
 		splits={1:[],2:[],3:[],4:[]}

@@ -36,6 +36,7 @@ typos = {
 	'ICN10228-1':'ICN10228',
 	'ICN1024':'ICN10234'
 }
+
 rename_cols={
 	"CHANNEL4-1": "Comb_Temp_OM(F)",
  	"CHANNEL3-1": "Outlet_Temp_OM(F)",
@@ -47,7 +48,8 @@ rename_cols={
   	"FLAMECUR": "Flame_Curr",
   	"TANKTEMP": "Tank_Temp",
   	"FLOW_GPM": "Flow_GPM",
-  	"INLTTEMP": "Inlet_Temp,"
+    "CHE_SIGN": "Comb_Cycles",
+  	"INLTTEMP": "Inlet_Temp"
 }
  #"Split Column by Delimiter" 
 city ={

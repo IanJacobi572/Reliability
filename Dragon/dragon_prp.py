@@ -19,6 +19,7 @@ class Dragon(pr.Preprocessing_Base):
 	def __init__(self, **kwargs):
 		super(Dragon, self).__init__(**kwargs) 
 		self.typos = kwargs.get('typos')
+		self.type = kwargs.get('type')
 		self.city = kwargs.get('city')
 		self.category = kwargs.get('category')
 		self.rename_cols = kwargs.get('rename_cols')
@@ -47,7 +48,9 @@ class Dragon(pr.Preprocessing_Base):
 			if len(delimited) > 1:
 				alarm_date = delimited[1]
 				alarm_time= parse(delimited[0]).time()
-
+				if self.type == 'EB1':
+					if alarm_code =='T105' or alarm_code=='T122':
+						continue
 				if(parse(row.Date.replace('/','-')) == parse(alarm_date.replace('/','-'))):
 					long = delim.join(delimited[3:]).strip()
 					alarm_code = delimited[2] 
@@ -71,7 +74,7 @@ class Dragon(pr.Preprocessing_Base):
 			df['Hours']=time.dt.hour
 			print(df.columns)
 			self.split_alarms(df)
-			df["City"] = self.city.get(name)
+			df["Location"] = self.city.get(name)
 			df["Category"] = self.category.get(name)
 			k = result_dir+"\\"+df['Unit_Name'].values.tolist()[0] +'_'+ df['Date'].values.tolist()[0].replace('/', '_') +"_.csv"
 			resultFrame.to_csv(k)
