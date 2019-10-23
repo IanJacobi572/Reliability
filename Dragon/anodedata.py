@@ -3,7 +3,7 @@ import os
 import csv
 import re
 from multiprocessing import Pool
-data_path = r'H:\Srinidhi Gangasani\Anode Monitoring\Anode Project\\'
+data_path = r'H:\ian.jacobi\Anode Project'
 row = []
 #for data in os.scandir(data_path):
 def process(data):
@@ -22,7 +22,7 @@ def process(data):
 		df["Date"]=date
 		columns = [col.replace('"','') for col in df.columns]
 		df.columns = columns
-		df["TIME"] = pd.to_datetime(df["TIME"])
+		#df["TIME"] = pd.to_datetime(df["TIME"])
 		for col in df.columns:
 		    digits.append( re.findall("\d+", col))
 		splits={1:[],2:[],3:[],4:[]}
@@ -40,8 +40,8 @@ def process(data):
 		    split_df["Tank"] = key
 		    print(split_df.columns)
 		    dataframes.append(split_df)
-		df_full=pd.concat(dataframes)
-		k = r'C:\Users\ian.jacobi\Documents\ltere\\'+data.split('\\')[-1]
+		df_full=pd.concat(dataframes, ignore_index = True)
+		k = r'C:\Anode\\'+data.split('\\')[-1]
 		df_full.to_csv(k, index = False)
 if __name__ == '__main__':
 	pool = Pool()
