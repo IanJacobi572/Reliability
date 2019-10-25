@@ -12,11 +12,12 @@ import re
 from collections import OrderedDict
 import os
 start_time = datetime.now()
-data_path = 'F:/Data on BDATAPROD2/RDDEPT/Satellite Lab/Reliability EC Folders/EC 06768 - HPWH - Khurram Sajjad/NL TESTING 2019/ECONET Data'
+data_path = 'H:/RDDEPT/Satellite Lab/Reliability EC Folders/EC 06768 - HPWH - Khurram Sajjad/NL TESTING 2019/ECONET Data'
 result_dir = 'c:/gen5/split'
 if not os.path.exists(result_dir):
-	os.mkdir(result_dir)
+	os.makedirs(result_dir)
 joined_dir = 'c:/gen5/prp'
+print('f')
 
 flame_col = 'HEATCTRL'
 del_cols = ()
