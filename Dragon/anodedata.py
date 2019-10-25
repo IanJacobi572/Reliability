@@ -17,6 +17,7 @@ def process(data):
 			if'/' in r[0]:
 				date = r[0]
 		dfcols= pd.read_csv(data,skiprows=6,nrows=1)
+		dfcols.columns = [f.upper() for f in dfcols.columns.values]
 		df = pd.read_csv(data, skiprows = 7, names = dfcols.columns, header=None, usecols = list(range(len(dfcols.columns))))
 		digits = []
 		df["Date"]=date

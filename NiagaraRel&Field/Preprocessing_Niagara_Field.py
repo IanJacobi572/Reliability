@@ -21,7 +21,7 @@ class Niagara_Field(pr.Preprocessing_Base):
 		successful_ignitions = []
 		cons = False
 		for val in df[self.flame_col]:
-			if(val == 'Flame Present'):
+			if(val == 'Flame Present' or val == '1' or val == 1):
 				if(cons == False):
 					successful_ignitions.append('1')
 					cons = True 
@@ -83,26 +83,27 @@ class Niagara_Field(pr.Preprocessing_Base):
 		if df.shape[0] > 1: #Ignore changing the files with only one row
 			cols = df.columns
 			df = df.drop("SW_VERSN", axis=1)
-			df["Current Cycles"] = 0
-			df["Week"] = 1
-			df["Average Cycles"] = 0
-
-			df["Target For Week"] = 0
-			df['Remaining Cycles'] = 0
-			df['Expected Cycles Per Day'] = 0
-			df['Completion Percent'] =0
-			est_date = ''
-			df["Estimated Completion"] = est_date
+			#df["Current Cycles"] = 0
+			#df["Week"] = 1
+			#df["Average Cycles"] = 0
+			#df["Target For Week"] = 0
+			#df['Remaining Cycles'] = 0
+			#df['Expected Cycles Per Day'] = 0
+			#df['Completion Percent'] =0
+			#est_date = ''
+			#df["Estimated Completion"] = est_date
 			#retrieve unit name
 			if(self.from_path == True):
 				self.unit_name_from_path(data_path, df)
 			else:
 				self.unit_name(df.columns, fileN, df)
-			self.count_non_consec_flames(df)
+			#self.count_non_consec_flames(df)
 			# Fix the Gallons Columns, Successful Ignitions, Failed Ignitions
 			# ,Flame Failures, Burner Minutes
 			zero = np.array([0])
 			df["Cycles"] = self.count_non_consec_flames(df)
+			print(df["Cycles"].unique())
+			print('aaaa')
 			df["Target Cycles"] = 0
 
 			# Taking the Absolute Value of the both the Deviations for easy
