@@ -93,7 +93,7 @@ cols_to_fix = ("CHE_BMIN", "CHE_GALS", "CHE_SIGN", "CHE_FIGN", "CHEFFAIL")
 deviation_cols = ("CHE_BPDV", "CHE_FCDV")
 min_cols = 27
 
-dragon = pr.Dragon(typos = typos, category = category, rename_cols = rename_cols, short_desc = short_desc, city = city, path = path, alarm_name = alarm_name, index_of_last_col = index_of_last_col, intended_cols = intended_cols,  cols_to_fix = cols_to_fix, deviation_cols = deviation_cols)
+dragon = pr.Dragon(type = 'EB1',typos = typos, category = category, rename_cols = rename_cols, short_desc = short_desc, city = city, path = path, alarm_name = alarm_name, index_of_last_col = index_of_last_col, intended_cols = intended_cols,  cols_to_fix = cols_to_fix, deviation_cols = deviation_cols)
 p = partial(dragon.main, result_dir = resultdir)
 if __name__ == '__main__':
 	dl = prp.from_ftp(str_date_start = '2019-6-1', path = path, remote_path=remote_path, ftp =ftp, start_str ="ICN")

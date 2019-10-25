@@ -179,7 +179,7 @@ class Preprocessing_Base:
                     df.columns = self.intended_cols
                     self.format_cols(cols, df, fileN, result_dir, data_path)
                 except Exception as e:
-                    raise e
+                    pass
 
             elif(self.check_if_multiple(df, digits[-1]) and len(digits) < 2):
                 last_int = digits[-1]
