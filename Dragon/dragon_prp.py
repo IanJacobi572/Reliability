@@ -27,6 +27,8 @@ class Dragon(pr.Preprocessing_Base):
 	def unit_name(self, cols, file_n, df):
 	# Add the Unit_Names for the file_name
 		unitName = file_n.split("_")[0].split('\\')[-1]
+		if('-1' in unitName):
+			unitName = unitName[:-2]
 		if unitName in self.typos:
 			unitName = self.typos.get(untiName)
 		print(unitName)
@@ -47,13 +49,13 @@ class Dragon(pr.Preprocessing_Base):
 			delimited = alarm.split(' ')
 			if len(delimited) > 1:
 				alarm_date = delimited[1]
+				alarm_code = delimited[2] 
 				alarm_time= parse(delimited[0]).time()
 				if self.type == 'EB1':
 					if alarm_code =='T105' or alarm_code=='T122':
 						continue
 				if(parse(row.Date.replace('/','-')) == parse(alarm_date.replace('/','-'))):
 					long = delim.join(delimited[3:]).strip()
-					alarm_code = delimited[2] 
 					if alarm_code != "A029":
 						short = self.short_desc.get(alarm_code)
 						row["Alarm Description"] = long

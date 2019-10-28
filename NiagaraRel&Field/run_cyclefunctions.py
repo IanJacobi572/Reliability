@@ -160,7 +160,16 @@ def cycle_fnc(directory):
 	df['Expected Cycles Per Day'] = cycles_per_day_group.get(group)
 	df['Completion Percent'] = running_count.values.tolist()[-1]/target
 	days_left = remaining/cycles_per_day_group.get(group)
-	est_date = ((df["Date"].values.tolist()[-3])) + datetime.timedelta(days = int(days_left))
+	latest_date = df["Date"].values.tolist()[-3]
+	est_date = latest_date + datetime.timedelta(days = int(days_left))
+
+	latest_week = latest_date + datetime.timedelta(days = 7)
+	updated_recently = latest_week < datetime.datetime.now().date()
+	if updated_recently:
+		update = {"Not Updated": [int(updated_recently)]}
+		updf = pd.DataFrame(update)
+		updf.to_csv("C:/Niagara/Update.csv")
+
 	df["Estimated Completion"] = est_date
 	df.to_csv(result_dir + '/' + df["Unit_Name"].values.tolist()[0] + '.csv', index = False)
 t = []
