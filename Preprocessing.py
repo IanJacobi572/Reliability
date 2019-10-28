@@ -59,10 +59,14 @@ class from_ftp:
         self.path_path = config_path + "/path.yaml"
     #checks: file type, whether the file has the right start, and if it isnt from today
     def get_file_date(self, name):
-        split = name.split("_")
-        day = split[-1][:-4]
-        date = parse(split[-3] + "-" + split[-2] + "-" + day)
-        return date.date() 
+        print(name)
+        try:
+            split = name.split("_")
+            day = split[-1][:-4]
+            date = parse(split[-3] + "-" + split[-2] + "-" + day)
+            return date.date() 
+        except:
+            return(datetime.now().date())
     def filter_remote_files(self):
         relevant_files = []
         #date_start = datetime.now().date()

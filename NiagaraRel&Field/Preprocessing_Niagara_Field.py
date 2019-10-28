@@ -56,9 +56,11 @@ class Niagara_Field(pr.Preprocessing_Base):
 			k = result_dir+"\\"+fileN[:-4] +"_" + str(i) +".csv"
 			split_df.to_csv(k)
 		except Exception as e:
-			pass
+			raise e
 	def unit_name_multiple(self, data_path, df, i):
 		location = os.path.basename(os.path.normpath(data_path))
+		if (location == "KT"):
+			location = "Kentucky"
 		name = location.split(" ")[0] + num2words(i)
 		df["Unit_Name"] = name.upper()
 		df["Station"] = name.upper()
@@ -67,6 +69,8 @@ class Niagara_Field(pr.Preprocessing_Base):
 		df["Category"] = "Field"
 	def unit_name_from_path(self, data_path, df):
 		name = os.path.basename(os.path.normpath(data_path))
+		if name == "KT":
+			name = "Kentucky"
 		name = name.split(" ")[0]
 		df["Unit_Name"] = name.upper()
 		df["Location"] = name.upper()
