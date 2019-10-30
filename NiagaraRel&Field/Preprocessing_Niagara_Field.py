@@ -57,7 +57,7 @@ class Niagara_Field(pr.Preprocessing_Base):
 			k = result_dir+"\\"+fileN[:-4] +"_" + str(i) +".csv"
 			split_df.to_csv(k)
 		except Exception as e:
-			raise e
+			pass
 	def unit_name_multiple(self, data_path, df, i):
 		location = os.path.basename(os.path.normpath(data_path))
 		if (location == "KT"):
