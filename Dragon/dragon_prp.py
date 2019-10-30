@@ -27,8 +27,7 @@ class Dragon(pr.Preprocessing_Base):
 	def unit_name(self, cols, file_n, df):
 	# Add the Unit_Names for the file_name
 		unitName = file_n.split("_")[0].split('\\')[-1]
-		if('-1' in unitName):
-			unitName = unitName[:-2]
+		unitName = unitName.split('-')[0]
 		if unitName in self.typos:
 			unitName = self.typos.get(untiName)
 		print(unitName)
