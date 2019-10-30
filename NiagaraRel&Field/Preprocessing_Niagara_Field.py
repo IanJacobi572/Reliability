@@ -31,32 +31,33 @@ class Niagara_Field(pr.Preprocessing_Base):
 				successful_ignitions.append('0')
 				cons = False
 		return successful_ignitions
+	def water_used(self, df):
+		df["Water Used"]=0
+		water = int(df["WTR_USED"].values[-1]) - int(df["WTR_USED"].values[0])
+		df["Water Used"].values[-1] = water
+		return df["Water Used"]
 	def create_multiple_file(self, df, result_dir, fileN, i, intended_cols_i, data_path):
+
+		#df["Date"] = pd.to_datetime(df["Date"], infer_datetime_format = True).dt.date
+		#df["Hour"] = pd.to_datetime(df["Time"], infer_datetime_format = True).dt.hour
+		#df["Time"] = pd.to_datetime(df["Time"], infer_datetime_format = True).dt.time
 		try:
 			split_df = df[intended_cols_i].copy()
 			split_df.columns = self.intended_cols[:-1]
 			self.del_row_with_dashes(split_df)
 			zero = np.array([0])
-
-			split_df["Current Cycles"] = 0
-			split_df['Remaining Cycles'] = 0
-			split_df['Expected Cycles Per Day'] = 0
-			split_df['Completion Percent'] =0
-			split_df["Week"] = 1
-			split_df["Target For Week"] = 0
-			est_date = datetime.now()
-			split_df["Estimated Completion"] = est_date
+			split_df["Water Used"] = self.water_used(split_df)
 			if not self.temp_cols == None:
 			    split_df["Delta_T"] = self.delta_t(self.temp_cols, split_df)
 			self.unit_name_multiple(data_path, split_df, i)
 			self.binary_col_array(self.binary_cols, split_df)
+			split_df["Date Time"] =(df["Date"] + " " + df["Time"])
 			split_df["Cycles"] = self.count_non_consec_flames(split_df)
-			split_df["Target Cycles"] = 0			
 			split_df["Delta_T"] = self.delta_t(self.temp_cols, split_df)
 			k = result_dir+"\\"+fileN[:-4] +"_" + str(i) +".csv"
 			split_df.to_csv(k)
 		except Exception as e:
-			pass
+			raise e
 	def unit_name_multiple(self, data_path, df, i):
 		location = os.path.basename(os.path.normpath(data_path))
 		if (location == "KT"):
@@ -104,12 +105,14 @@ class Niagara_Field(pr.Preprocessing_Base):
 			#self.count_non_consec_flames(df)
 			# Fix the Gallons Columns, Successful Ignitions, Failed Ignitions
 			# ,Flame Failures, Burner Minutes
+			#df["Date"] = pd.to_datetime(df["Date"], infer_datetime_format = True).dt.date
+			#df["Hour"] = pd.to_datetime(df["Time"], infer_datetime_format = True).dt.hour
+			#df["Time"] = pd.to_datetime(df["Time"], infer_datetime_format = True).dt.time
+			df["Date Time"] = (df["Date"] + " " + df["Time"])
 			zero = np.array([0])
 			df["Cycles"] = self.count_non_consec_flames(df)
 			print(df["Cycles"].unique())
-			print('aaaa')
-			df["Target Cycles"] = 0
-
+			df["Water Used"] = self.water_used(df)
 			# Taking the Absolute Value of the both the Deviations for easy
 			# analysis
 			if not self.deviation_cols == None:
