@@ -82,7 +82,9 @@ gen_out = pr.Gen5_Rel(all_cols = all_cols,station_names = station_names,instance
 gen_out.main(data_path, result_dir)
 p_out = partial(gen_out.main,result_dir = result_dir)
 def join(directory):
-	df = pd.concat([pd.read_csv(file, low_memory = False) for file in os.scandir(directory)], ignore_index = True)
+	files = sorted([f.path for f in os.scandir(directory)], reverse = True)
+	print(files)
+	df = pd.concat(([pd.read_csv(file, low_memory = False) for file in files]), ignore_index = True)
 	df.to_csv(joined_dir + '/' + directory.split('\\')[-1] + '.csv', index = False)
 if __name__ == '__main__':
 	pool = Pool()
