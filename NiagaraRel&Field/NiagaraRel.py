@@ -30,21 +30,11 @@ class Niagara_Reliability(pr.Preprocessing_Base):
 	def get_file_date(self, date):
 		date = parse(date)
 		return date.date() 
-	def count_non_consec_flames(self, df):
-		sucsesful_ignitions = []
-		cons = False
-
-		for val in df[self.flame_col]:
-			if(val == 'Flame Present'):
-				if(cons == False):
-					sucsesful_ignitions.append('1')
-					cons = True 
-				else:
-					sucsesful_ignitions.append('0')
-			else:
-				sucsesful_ignitions.append('0')
-				cons = False
-		return sucsesful_ignitions
+	def count_cycles(self, df):
+		flow_gpm = df.loc[df["FLOW_GPM"].astype(float) > .2]
+		flow_gpm["Distance"] =  np.append(0, np.ediff1d(flow_gpm.index))
+		flow_gpm = flow_gpm.loc[flow_gpm["Distance"] > 1]
+		return(len(flow_gpm))
 
 	def create_multiple_file(self, df, result_dir, fileN, i, intended_cols_i):
 		empty = False
@@ -83,14 +73,8 @@ class Niagara_Reliability(pr.Preprocessing_Base):
 			self.binary_to_string(self.flame_col, split_df)
 			split_df["Location"] = "Nuevo Laredo"
 			split_df["Category"] = "Reliability"
-			split_df["Cycles"] = self.count_non_consec_flames(split_df)
-			if station == 'H9' or station == "H8":
-				cycles_df = split_df.loc[split_df.Cycles == '1'].copy()
-				print(cycles_df)
-				cycles_df["Distance"] =  np.append(0, np.ediff1d(cycles_df.index))
-				split_df.Cycles = 0 
-				print(len(cycles_df.loc[(cycles_df.Distance > 18)]))
-				split_df.Cycles.values[0] = len(cycles_df.loc[(cycles_df.Distance > 18)])
+			split_df["Cycles"] = 0
+			split_df["Cycles"].values[0] = self.count_cycles(split_df)
 			split_df["Week"] =  week
 			#print(split_df['Unit_Name'].values[1])
 			split_df["Delta_T"] = self.delta_t(self.temp_cols, split_df)

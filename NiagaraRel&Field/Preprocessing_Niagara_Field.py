@@ -17,20 +17,12 @@ class Niagara_Field(pr.Preprocessing_Base):
 		super(Niagara_Field, self).__init__(**kwargs)
 		self.flame_col = kwargs.get('flame_col')
 		self.result_dir = kwargs.get('result_dir')
-	def count_non_consec_flames(self, df):
-		successful_ignitions = []
-		cons = False
-		for val in df[self.flame_col]:
-			if(val == 'Flame Present' or val == '1' or val == 1):
-				if(cons == False):
-					successful_ignitions.append('1')
-					cons = True 
-				else:
-					successful_ignitions.append('0')
-			else:
-				successful_ignitions.append('0')
-				cons = False
-		return successful_ignitions
+	
+	def count_cycles(self, df):
+		flow_gpm = df.loc[df["FLOW_GPM"] > .26]
+		flow_gpm["Distance"] =  np.append(0, np.ediff1d(flow_gpm.index))
+		flow_gpm = flow_gpm.loc[flow_gpm["Distance"] > 1]
+		return(len(flow_gpm))
 	def water_used(self, df):
 		df["Water Used"]=0
 		water = int(df["WTR_USED"].values[-1]) - int(df["WTR_USED"].values[0])
@@ -52,7 +44,8 @@ class Niagara_Field(pr.Preprocessing_Base):
 			self.unit_name_multiple(data_path, split_df, i)
 			self.binary_col_array(self.binary_cols, split_df)
 			split_df["Date Time"] =(df["Date"] + " " + df["Time"])
-			split_df["Cycles"] = self.count_non_consec_flames(split_df)
+			split_df["Cycles"] = 0
+			split_df["Cycles"].values[0] = self.count_cycles(split_df)
 			split_df["Delta_T"] = self.delta_t(self.temp_cols, split_df)
 			k = result_dir+"\\"+fileN[:-4] +"_" + str(i) +".csv"
 			split_df.to_csv(k)
@@ -110,7 +103,8 @@ class Niagara_Field(pr.Preprocessing_Base):
 			#df["Time"] = pd.to_datetime(df["Time"], infer_datetime_format = True).dt.time
 			df["Date Time"] = (df["Date"] + " " + df["Time"])
 			zero = np.array([0])
-			df["Cycles"] = self.count_non_consec_flames(df)
+			df["Cycles"] = 0
+			df["Cycles"].values[0] = self.count_cycles(df)
 			print(df["Cycles"].unique())
 			df["Water Used"] = self.water_used(df)
 			# Taking the Absolute Value of the both the Deviations for easy

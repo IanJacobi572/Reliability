@@ -40,12 +40,14 @@ class Dragon(pr.Preprocessing_Base):
 		df["Short Description"]=''
 		df["Alarm Time"]=''
 		df["Alarm Date"]=''
+		#
 		for key in groups:
 			idx = groups.get(key)[0]
 			row = df.loc[idx].copy()
 			alarm = row.ALARMH01            
 			delim = ' '
 			delimited = alarm.split(' ')
+			#if delimited is more than one value
 			if len(delimited) > 1:
 				alarm_date = delimited[1]
 				alarm_code = delimited[2] 
@@ -55,7 +57,8 @@ class Dragon(pr.Preprocessing_Base):
 						continue
 				if(parse(row.Date.replace('/','-')) == parse(alarm_date.replace('/','-'))):
 					long = delim.join(delimited[3:]).strip()
-					if alarm_code != "A029":
+					#A029 indicates a failed attempt, rather than a regular alarm
+					if alarm_code != "A029" :
 						short = self.short_desc.get(alarm_code)
 						row["Alarm Description"] = long
 						row["Short Description"] = short

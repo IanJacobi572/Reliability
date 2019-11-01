@@ -59,7 +59,7 @@ target_cycles = {
 	'1' : 14400,
 	'2' : 25100,
 	'3' : 14400,
-	'Low Flow': 61320
+	'Low Flow': 15631
 }
 diff_cycles = {
 	'G9' : 11360,
