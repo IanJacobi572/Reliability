@@ -7,6 +7,7 @@ data_path = r'H:\ian.jacobi\Anode Project'
 row = []
 #for data in os.scandir(data_path):
 def process(data):
+	coating = {"1": 'coating','2':'no coating', '3':'no coating','4':'coating'}
 	with open(data,'r') as f:
 	    reader = csv.reader(f)
 	    for i in range(0,4):
@@ -38,7 +39,7 @@ def process(data):
 		    split_df = df[d].copy()
 		    without_tank = f+[col[8:] for col in split_df.columns[3:]]
 		    split_df.columns=without_tank
-		    split_df["Tank"] = key
+		    split_df["Tank"] = "Tank " + str(key) + " "+ coating.get(str(key))
 		    print(split_df.columns)
 		    dataframes.append(split_df)
 		df_full=pd.concat(dataframes, ignore_index = True)

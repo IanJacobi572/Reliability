@@ -9,8 +9,9 @@ def read_daq(file_path):
 		df.columns = ['Date', 'Time', 'Mean Top Flue', 'Mean Outlet Water', 'Mean Inlet Water', 'Mean Air Intake', ' Unused']
 		station = file_name.split(' ')[0]
 		df["Station"] = station
+		df["Date Time"] = df['Date'] + ' ' + df["Time"]
 		df.Date = pd.to_datetime(df.Date, infer_datetime_format=True).dt.date
-		start_date = df.Date.values[0]
+		start_date = min(df.Date.values)
 		print(start_date)
 		start_week = start_date.isocalendar()[1]
 		df["Week"] = [f.isocalendar()[1] + (((f.year-start_date.year)* 52)) - (start_week ) for f in df.Date.values.tolist()]
