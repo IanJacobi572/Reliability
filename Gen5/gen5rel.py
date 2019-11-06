@@ -36,7 +36,7 @@ class Gen5_Rel(pr.Preprocessing_Base):
 			split_df = df[intended_cols_i].copy()
 
 			self.del_row_with_dashes(split_df)
-			if split_df.shape[0] >1:
+			if split_df.shape[0] >1 and i != 25:
 					#print(int(split_df['INSTANCE'].values[0]) > 7)
 					instance = str(i)
 					for col in self.all_cols:
@@ -44,7 +44,7 @@ class Gen5_Rel(pr.Preprocessing_Base):
 							split_df[col] = np.nan
 					split_df = split_df[self.all_cols].copy()
 					print(i)
-					date_str = split_df["Date"].values.tolist()[0]
+					date_str = split_df["Date"].values.tolist()[-1]
 					name = self.instance_names.get(instance)
 					split_df['Unit_Name'] = name
 					station = self.station_names.get(instance)
@@ -61,10 +61,11 @@ class Gen5_Rel(pr.Preprocessing_Base):
 					if not self.binary_cols == None:
 						self.binary_col_array(self.binary_cols, split_df)
 					#Deprecated date check
-					date = self.get_file_date(split_df["Date"].values.tolist()[0])
+					date = self.get_file_date(split_df["Date"].values.tolist()[-1])
 					split_df["Month"] = date.strftime('%B')
 					#start_date = parse('2019-7-8').date()
 					split_df.to_csv(k + date_str.replace('/','_') + ".csv", index= False)
+					print('Finished')
 			else:
 				
 				if(fileN.split('\\')[-1] == "Rel_2019_11_1.csv"):
