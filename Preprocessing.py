@@ -15,14 +15,14 @@ from collections import OrderedDict
 def find_intended_cols_multiple_file(data_path, path):
     col_path = path + '/config/cols.yaml'
     with os.scandir(data_path) as list_of_entries:
-        print(list_of_entries)
+        #print(list_of_entries)
         for entry in list_of_entries:
             if(entry.name.endswith('.csv')):
-                df = pd.read_csv(data_path + '/' + entry.name)
+                df = pd.read_csv(data_path + '/' + entry.name, low_memory = False)
                 intended_cols  = df.columns.values.tolist()[:2] + [re.sub(r'_?[^A-Z_]+$', "", col) for col in df.columns.values.tolist()[2:]]
                 intended_cols_no_dupes = list(OrderedDict.fromkeys(intended_cols))
-                print(intended_cols_no_dupes)
-                print(entry.name)
+                #print(intended_cols_no_dupes)
+                #print(entry.name)
                 if(intended_cols_no_dupes[0] == 'Time'):
                     return intended_cols_no_dupes
 
@@ -178,7 +178,7 @@ class Preprocessing_Base:
                 df = self.delete_cols(df)
             cols = df.columns
             if len(cols) == min_cols or digits == []:
-                print(fileN)
+                
                 try:
                     df.columns = self.intended_cols
                     self.format_cols(cols, df, fileN, result_dir, data_path)
@@ -198,7 +198,7 @@ class Preprocessing_Base:
         for i in range(1, int(last_int)+1):
             colnames = df.columns.values.tolist()
             intended_cols_i =['Time', 'Date'] + [col + "_" + str(i) for col in self.intended_cols[2:-1]]
-
+            print(intended_cols_i in  df.columns.values.tolist())
             #if not self.binary_cols == None:
             #intended_cols_i.append("SW_VERSN")
             #df.columns = intended_cols_i
@@ -222,7 +222,6 @@ class Preprocessing_Base:
             # Fix the Gallons Columns, Successful Ignitions, Failed Ignitions
             # ,Flame Failures, Burner Minutes
             zero = np.array([0])
-            print(fileN)
             self.prepare_arr_of_cols(zero, self.cols_to_fix, df)
             # Taking the Absolute Value of the both the Deviations for easy
             # analysis
@@ -230,7 +229,6 @@ class Preprocessing_Base:
                 self.take_abs_of_devs(df)
             if not self.binary_cols == None:
                 self.binary_col_array(self.binary_cols, df)
-            print(fileN, len(cols), cols[-1], cols[0])
 
             #Save only the files that contain info
             self.create_file(result_dir, fileN, df)
