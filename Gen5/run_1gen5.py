@@ -26,17 +26,28 @@ intended_cols_outside = []
 intended_cols = cols.find_intended_cols_multiple_file(data_path, path)
 print(intended_cols)
 instance_names = {
-	'14':'NL1299',
+    '17':'NL1301',
+    '18':'NL1302',
+    '19':'NL1303',
+    '20':'NL1304',
+    '14':'NL1299',
 	'15':'NL1300',
 	'6':'NL0434',
 	'4':'NL0435',
 	'3':'NL1289',
 	'1':'NL0437',
+    #'1':'NL0458',
 	'5':'NL0428',
+    '21':'NL305',
+    '22':'NL306',
 	'11':'NL1296',
 	'12':'NL1297',
+    #'11':'NL1320',
+	#'12':'NL1321',
 	'2':'NL0441',
 	'7':'NL0442',
+    '23':'NL307',
+    '24':'NL308',
 	'10':'NL1295',
 	'9':'NL1294',
 	'16':'NL0460',
@@ -44,6 +55,10 @@ instance_names = {
 	'13':'NL1298'
 }
 station_names = {
+    '17':'D1',
+    '18':'D2',
+    '19':'D3',
+    '20':'D4',
 	'14':'F8',
 	'15':'F10',
 	'6':'C10',
@@ -51,16 +66,21 @@ station_names = {
 	'3':'C5',
 	'1':'C3',
 	'5':'C9',
+    '21':'D5',
+    '22':'D6',
 	'12':'F6',
 	'11':'F5',
 	'2':'C4',
 	'7':'C11',
+    '23':'D7',
+    '24':'D8',
 	'10':'F3',
 	'9':'F2',
 	'16':'F11',
 	'8':'F1',
 	'13':'F7'
 }
+
 all_cols = [f for f in intended_cols]
 subfolders = [f.path for f in os.scandir(data_path) if f.is_dir() ]
 for sub in subfolders:
