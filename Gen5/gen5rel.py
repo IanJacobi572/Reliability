@@ -29,24 +29,22 @@ class Gen5_Rel(pr.Preprocessing_Base):
 		except KeyError as e:
 			#print(e.args[0])
 			missing = e.args[0].split('\'')
-			print(missing)
 			for name in missing:
 				if name in intended_cols_i:
 					intended_cols_i.remove(name)
-			print(intended_cols_i)
-			intended_cols = ["Time", "Date"] + [re.sub(r'_?[^A-Z_]+$', "", col) for col in intended_cols_i[2:]]
+			##print(intended_cols_i)
+			intended_cols = ["Time", "Date"] + [col.rsplit('_',1)[0] for col in intended_cols_i[2:]]
 			split_df = df[intended_cols_i].copy()
 			split_df.columns = intended_cols
 		self.del_row_with_dashes(split_df)
-		print(split_df.head())
 		if split_df.shape[0] >3 and i != 25:
 				#print(int(split_df['INST
 				instance = str(i)
 				for col in self.all_cols:
 					if not col in split_df.columns.values.tolist():
-						split_df[col] = np.nan
+						split_df[col] = ' '
 				split_df = split_df[self.all_cols].copy()
-				print(i)
+				#print(i)
 				try:
 					date_str = str(split_df["Date"].values.tolist()[int(df.shape[0]/2)])
 				except:
@@ -58,7 +56,7 @@ class Gen5_Rel(pr.Preprocessing_Base):
 				k = result_dir+"\\" + name + "_"+ station + '\\'
 				if not os.path.exists(k):
 					os.makedirs(k)
-					print(k)
+					#print(k)
 				#if split_df["Date"].values.tolist()[1] in df_result["Date"]:
 					#print('aaaa')
 				zero = np.array([0])
@@ -66,13 +64,13 @@ class Gen5_Rel(pr.Preprocessing_Base):
 				if not self.binary_cols == None:
 					self.binary_col_array(self.binary_cols, split_df)
 				#Deprecated date check
-				print(date_str)
+				#print(date_str)
 				date = self.get_file_date((split_df["Date"].values[0]))
 
 				split_df["Month"] = date.strftime('%B')
 				#start_date = parse('2019-7-8').date()
 				split_df.to_csv(k + date_str.replace('/','_') + ".csv", index= False)
-				print('Finished')
+				#print('Finished')
 		else:
 			
 			if(fileN.split('\\')[-1] == "Rel_2019_11_1.csv"):
@@ -104,7 +102,7 @@ class Gen5_Rel(pr.Preprocessing_Base):
 		print('f')
 		for i in range(int(first_int), int(last_int)+1):
 			colnames = df.columns.values.tolist()
-			intended_cols_i =['Time', 'Date'] + [col + "_" + str(i) for col in self.intended_cols[2:-1]]
+			intended_cols_i =['Time', 'Date'] + [col + "_" + str(i) for col in self.intended_cols[2:]]
 			zero = np.array([0])
 			self.create_multiple_file(df, result_dir, fileN, i, intended_cols_i, data_path)
 	  
