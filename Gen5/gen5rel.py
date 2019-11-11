@@ -39,7 +39,8 @@ class Gen5_Rel(pr.Preprocessing_Base):
 		self.del_row_with_dashes(split_df)
 		if split_df.shape[0] >3 and i != 25:
 				#print(int(split_df['INST
-				instance = str(i)
+				instance = int(split_df["INSTANCE"].values.tolist()[0])
+				instance = str(instance)
 				for col in self.all_cols:
 					if not col in split_df.columns.values.tolist():
 						split_df[col] = ' '
@@ -53,6 +54,8 @@ class Gen5_Rel(pr.Preprocessing_Base):
 				split_df['Unit_Name'] = name
 				station = self.station_names.get(instance)
 				split_df["Station"] = station
+				if(name == None):
+					print(instance,str(i))
 				k = result_dir+"\\" + name + "_"+ station + '\\'
 				if not os.path.exists(k):
 					os.makedirs(k)
@@ -95,11 +98,10 @@ class Gen5_Rel(pr.Preprocessing_Base):
 			#print(colnames)
 			last_int = digits_last[-1]
 			first_int = digits_first[-1]
-			print(first_int, last_int)
 			self.format_multiple_cols(df, fileN, result_dir, data_path, first_int, last_int)     
 			
 	def format_multiple_cols(self, df, fileN, result_dir, data_path, first_int, last_int):
-		print('f')
+	
 		for i in range(int(first_int), int(last_int)+1):
 			colnames = df.columns.values.tolist()
 			intended_cols_i =['Time', 'Date'] + [col + "_" + str(i) for col in self.intended_cols[2:]]
