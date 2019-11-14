@@ -98,9 +98,6 @@ for sub in all_folders:
 		col_diff = sorted(list(set(intended_cols_sub)- set(all_cols) ))
 		all_cols = all_cols + [f for f in col_diff]
 all_cols = list(OrderedDict.fromkeys(all_cols))
-if 'U' in all_cols: 
-	all_cols.remove('U')
-#print(all_cols)
 
 gen_out = pr.Gen5_Rel(all_cols = all_cols,station_names = station_names,instance_names = instance_names,intended_cols= all_cols, path  = 'c:/gen5', flame_col = flame_col)
 gen_out.main(data_path, result_dir)
