@@ -39,7 +39,10 @@ class Gen5_Rel(pr.Preprocessing_Base):
 		self.del_row_with_dashes(split_df)
 		if split_df.shape[0] >3 and i != 25:
 				#print(int(split_df['INST
-				instance = int(split_df["INSTANCE"].values.tolist()[0])
+				try:
+					instance = int(split_df["INSTANCE"].values.tolist()[0])
+				except:
+					instance = str(i)
 				instance = str(instance)
 				for col in self.all_cols:
 					if not col in split_df.columns.values.tolist():
