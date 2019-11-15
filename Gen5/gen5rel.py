@@ -59,25 +59,28 @@ class Gen5_Rel(pr.Preprocessing_Base):
 				split_df["Station"] = station
 				if(name == None):
 					print(instance,str(i))
-				k = result_dir+"\\" + name + "_"+ station + '\\'
-				if not os.path.exists(k):
-					os.makedirs(k)
-					#print(k)
-				#if split_df["Date"].values.tolist()[1] in df_result["Date"]:
-					#print('aaaa')
-				zero = np.array([0])
-				df.fillna('')
-				if not self.binary_cols == None:
-					self.binary_col_array(self.binary_cols, split_df)
-				#Deprecated date check
-				#print(date_str)
-				date = self.get_file_date((split_df["Date"].values[0]))
+				try:
 
-				split_df["Month"] = date.strftime('%B')
-				#start_date = parse('2019-7-8').date()
-				split_df.to_csv(k + date_str.replace('/','_') + ".csv", index= False)
-				print(station +' '+ date + ' Finished')
-	
+					k = result_dir+"\\" + name + "_"+ station + '\\'
+					if not os.path.exists(k):
+						os.makedirs(k)
+						#print(k)
+					#if split_df["Date"].values.tolist()[1] in df_result["Date"]:
+						#print('aaaa')
+					zero = np.array([0])
+					df.fillna('')
+					if not self.binary_cols == None:
+						self.binary_col_array(self.binary_cols, split_df)
+					#Deprecated date check
+					#print(date_str)
+					date = self.get_file_date((split_df["Date"].values[0]))
+
+					split_df["Month"] = date.strftime('%B')
+					#start_date = parse('2019-7-8').date()
+					split_df.to_csv(k + date_str.replace('/','_') + ".csv", index= False)
+					print(station +' '+ month + ' Finished')
+				except:
+					pass
 	def read_files(self, data_path, result_dir):
 		#find min cols of thing
 		min_cols = len(self.intended_cols)
