@@ -17,6 +17,8 @@ result_dir = 'c:/gen5/split'
 if not os.path.exists(result_dir):
 	os.makedirs(result_dir)
 joined_dir = 'c:/gen5/prp'
+if not os.path.exists(joined_dir):
+	os.makedirs(joined_dir)
 
 flame_col = 'HEATCTRL'
 del_cols = ()
@@ -104,16 +106,19 @@ gen_out.main(data_path, result_dir)
 p_out = partial(gen_out.main,result_dir = result_dir)
 def join(directory):
 	files = sorted([f.path for f in os.scandir(directory)], reverse = True)
-	#print(files)
+	print(files)
 	df = pd.concat(([pd.read_csv(file, low_memory = False) for file in files]), ignore_index = True)
 	df.to_csv(joined_dir + '/' + directory.split('\\')[-1] + '.csv', index = False)
 if __name__ == '__main__':
 	pool = Pool()
 	pool.map(p_out, all_files)
 	sub_results = [f.path for f in os.scandir(result_dir) if f.is_dir() ]
-	pool.map(join,sub_results)
 	pool.close()
 	pool.join()
+	pool2 = Pool()
+	pool2.map(join,sub_results)
+	pool2.close()
+	pool2.join()
 	'''for directory in sub_results:
 					df = pd.concat([pd.read_csv(file, low_memory = False) for file in os.scandir(directory.path)], ignore_index = True)
 					df.to_csv(joined_dir + directory.name + '.csv')'''

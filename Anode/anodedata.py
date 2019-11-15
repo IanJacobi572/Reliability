@@ -3,7 +3,7 @@ import os
 import csv
 import re
 from multiprocessing import Pool
-data_path = r'H:\ian.jacobi\Anode Project'
+data_path = r'C:\Anode\raw'
 row = []
 #for data in os.scandir(data_path):
 def process(data):
@@ -43,7 +43,9 @@ def process(data):
 		    print(split_df.columns)
 		    dataframes.append(split_df)
 		df_full=pd.concat(dataframes, ignore_index = True)
-		k = r'C:\Anode\\'+data.split('\\')[-1]
+		#df_full["Date Time"] = str(date) + ' ' + str(df_full["TIME"].values[0])
+		#df_full["Hour"] = pd.to_datetime(df_full["TIME"],infer_datetime_format = True).dt.hour
+		k = r'C:\Anode\\data\\'+data.split('\\')[-1]
 		df_full.to_csv(k, index = False)
 if __name__ == '__main__':
 	pool = Pool()

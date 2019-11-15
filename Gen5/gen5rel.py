@@ -76,11 +76,8 @@ class Gen5_Rel(pr.Preprocessing_Base):
 				split_df["Month"] = date.strftime('%B')
 				#start_date = parse('2019-7-8').date()
 				split_df.to_csv(k + date_str.replace('/','_') + ".csv", index= False)
-				#print('Finished')
-		else:
-			
-			if(fileN.split('\\')[-1] == "Rel_2019_11_1.csv"):
-				print("empty")
+				print(station +' '+ date + ' Finished')
+	
 	def read_files(self, data_path, result_dir):
 		#find min cols of thing
 		min_cols = len(self.intended_cols)
