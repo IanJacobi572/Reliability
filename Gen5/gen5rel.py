@@ -43,8 +43,8 @@ class Gen5_Rel(pr.Preprocessing_Base):
 				try:
 					instance = int(split_df["INSTANCE"].values.tolist()[-1])
 					if not instance == int(split_df["INSTANCE"].values.tolist()[0]):
-						df = df.drop(0)
-						print("dropped")
+						df = df.drop([0])
+						print("dropped" + fileN)
 				except:
 					instance = str(i)
 				instance = str(instance)
@@ -74,13 +74,13 @@ class Gen5_Rel(pr.Preprocessing_Base):
 					#Deprecated date check
 					#print(date_str)
 					date = self.get_file_date((split_df["Date"].values[-3]))
-					date_str = date.strftime("%Y_%-m_%-d")
+					date_str = date.strftime("%Y_%m_%d")
 
 					split_df["Month"] = date.strftime('%B')
 					#start_date = parse('2019-7-8').date()
 					split_df.to_csv(k + date_str +".csv", index= False)
-					print(station +' '+ month + ' Finished')
-				except:
+					print(station +' '+ date_str + ' Finished')
+				except Exception as e:
 					pass
 	#reads input files 
 	def read_files(self, data_path, result_dir):
