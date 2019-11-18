@@ -83,33 +83,38 @@ station_names = {
 	'25':''
 }
 
-all_files = []
-all_folders = []
-for root, dirs, files in os.walk(data_path):
-	for name in files:
-		all_files.append(os.path.join(root, name))
-		if(name == "Rel_2019_11_1.csv"):
-			print("HEREH")
-	for name in dirs:
-		all_folders.append(os.path.join(root, name))
-all_cols = [f for f in intended_cols]
-#print(subfolders)
-for sub in all_folders:
-	intended_cols_sub = cols.find_intended_cols_multiple_file(sub, path)
-	if not(intended_cols_sub == None):
-		col_diff = sorted(list(set(intended_cols_sub)- set(all_cols) ))
-		all_cols = all_cols + [f for f in col_diff]
-all_cols = list(OrderedDict.fromkeys(all_cols))
 
-gen_out = pr.Gen5_Rel(all_cols = all_cols,station_names = station_names,instance_names = instance_names,intended_cols= all_cols, path  = 'c:/gen5', flame_col = flame_col)
-gen_out.main(data_path, result_dir)
-p_out = partial(gen_out.main,result_dir = result_dir)
+
 def join(directory):
 	files = sorted([f.path for f in os.scandir(directory)], reverse = True)
 	print(files)
 	df = pd.concat(([pd.read_csv(file, low_memory = False) for file in files]), ignore_index = True)
 	df.to_csv(joined_dir + '/' + directory.split('\\')[-1] + '.csv', index = False)
+'''def check_for_repeats(files):
+	for file in files:
+		for done in os.scandir(joined_dir):
+			if()'''
 if __name__ == '__main__':
+	all_files = []
+	all_folders = []
+	for root, dirs, files in os.walk(data_path):
+		for name in files:
+			all_files.append(os.path.join(root, name))
+			
+		for name in dirs:
+			all_folders.append(os.path.join(root, name))
+	all_cols = [f for f in intended_cols]
+	#print(subfolders)
+	for sub in all_folders:
+		intended_cols_sub = cols.find_intended_cols_multiple_file(sub, path)
+		if not(intended_cols_sub == None):
+			col_diff = sorted(list(set(intended_cols_sub)- set(all_cols) ))
+			all_cols = all_cols + [f for f in col_diff]
+	all_cols = list(OrderedDict.fromkeys(all_cols))
+
+	gen_out = pr.Gen5_Rel(all_cols = all_cols,station_names = station_names,instance_names = instance_names,intended_cols= all_cols, path  = 'c:/gen5', flame_col = flame_col)
+	gen_out.main(data_path, result_dir)
+	p_out = partial(gen_out.main,result_dir = result_dir)
 	pool = Pool()
 	pool.map(p_out, all_files)
 	sub_results = [f.path for f in os.scandir(result_dir) if f.is_dir() ]

@@ -18,10 +18,11 @@ class Gen5_Rel(pr.Preprocessing_Base):
 		self.flame_col = kwargs.get('flame_col')
 		self.instance_names = kwargs.get('instance_names')
 		self.all_cols = kwargs.get('all_cols')
-
+	#gets date from input date string 
 	def get_file_date(self, date):
 		date = parse(date)
 		return date.date()
+	#outpu and formatting function
 	def create_multiple_file(self, df, result_dir, fileN, i, intended_cols_i, data_path):
 		try:
 			split_df = df[intended_cols_i].copy()
@@ -40,7 +41,10 @@ class Gen5_Rel(pr.Preprocessing_Base):
 		if split_df.shape[0] >3 and i != 25:
 				#print(int(split_df['INST
 				try:
-					instance = int(split_df["INSTANCE"].values.tolist()[0])
+					instance = int(split_df["INSTANCE"].values.tolist()[-1])
+					if not instance == int(split_df["INSTANCE"].values.tolist()[0]):
+						df = df.drop(0)
+						print("dropped")
 				except:
 					instance = str(i)
 				instance = str(instance)
@@ -49,10 +53,6 @@ class Gen5_Rel(pr.Preprocessing_Base):
 						split_df[col] = ' '
 				split_df = split_df[self.all_cols].copy()
 				#print(i)
-				try:
-					date_str = str(split_df["Date"].values.tolist()[int(df.shape[0]/2)])
-				except:
-					date_str = str(split_df["Date"].values.tolist()[-1])
 				name = self.instance_names.get(instance)
 				split_df['Unit_Name'] = name
 				station = self.station_names.get(instance)
@@ -73,14 +73,16 @@ class Gen5_Rel(pr.Preprocessing_Base):
 						self.binary_col_array(self.binary_cols, split_df)
 					#Deprecated date check
 					#print(date_str)
-					date = self.get_file_date((split_df["Date"].values[0]))
+					date = self.get_file_date((split_df["Date"].values[-3]))
+					date_str = date.strftime("%Y_%-m_%-d")
 
 					split_df["Month"] = date.strftime('%B')
 					#start_date = parse('2019-7-8').date()
-					split_df.to_csv(k + date_str.replace('/','_') + ".csv", index= False)
+					split_df.to_csv(k + date_str +".csv", index= False)
 					print(station +' '+ month + ' Finished')
 				except:
 					pass
+	#reads input files 
 	def read_files(self, data_path, result_dir):
 		#find min cols of thing
 		min_cols = len(self.intended_cols)
