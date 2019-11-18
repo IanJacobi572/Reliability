@@ -43,7 +43,7 @@ class Gen5_Rel(pr.Preprocessing_Base):
 				try:
 					instance = int(split_df["INSTANCE"].values.tolist()[-1])
 					if not instance == int(split_df["INSTANCE"].values.tolist()[0]):
-						df = df.drop([0])
+						split_df.drop([0], inplace=True)
 						print("dropped" + fileN)
 				except:
 					instance = str(i)
