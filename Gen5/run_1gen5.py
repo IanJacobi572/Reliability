@@ -12,11 +12,13 @@ import re
 from collections import OrderedDict
 import os
 start_time = datetime.now()
-data_path = 'H:/RDDEPT/Satellite Lab/Reliability EC Folders/EC 06768 - HPWH - Khurram Sajjad/NL TESTING 2019/ECONET Data'
+data_path = 'F:/Data on BDATAPROD2/RDDEPT/Satellite Lab/Reliability EC Folders/EC 06768 - HPWH - Khurram Sajjad/NL TESTING 2019/ECONET Data'
 result_dir = 'c:/gen5/split'
 if not os.path.exists(result_dir):
 	os.makedirs(result_dir)
 joined_dir = 'c:/gen5/prp'
+if not os.path.exists(joined_dir):
+	os.makedirs(joined_dir)
 
 flame_col = 'HEATCTRL'
 del_cols = ()
@@ -81,41 +83,47 @@ station_names = {
 	'25':''
 }
 
-all_files = []
-all_folders = []
-for root, dirs, files in os.walk(data_path):
-	for name in files:
-		all_files.append(os.path.join(root, name))
-		if(name == "Rel_2019_11_1.csv"):
-			print("HEREH")
-	for name in dirs:
-		all_folders.append(os.path.join(root, name))
-all_cols = [f for f in intended_cols]
-#print(subfolders)
-for sub in all_folders:
-	intended_cols_sub = cols.find_intended_cols_multiple_file(sub, path)
-	if not(intended_cols_sub == None):
-		col_diff = sorted(list(set(intended_cols_sub)- set(all_cols) ))
-		all_cols = all_cols + [f for f in col_diff]
-all_cols = list(OrderedDict.fromkeys(all_cols))
-all_cols.remove('U')
-#print(all_cols)
 
-gen_out = pr.Gen5_Rel(all_cols = all_cols,station_names = station_names,instance_names = instance_names,intended_cols= all_cols, path  = 'c:/gen5', flame_col = flame_col)
-gen_out.main(data_path, result_dir)
-p_out = partial(gen_out.main,result_dir = result_dir)
+
 def join(directory):
 	files = sorted([f.path for f in os.scandir(directory)], reverse = True)
-	#print(files)
+	print(files)
 	df = pd.concat(([pd.read_csv(file, low_memory = False) for file in files]), ignore_index = True)
 	df.to_csv(joined_dir + '/' + directory.split('\\')[-1] + '.csv', index = False)
+'''def check_for_repeats(files):
+	for file in files:
+		for done in os.scandir(joined_dir):
+			if()'''
 if __name__ == '__main__':
+	all_files = []
+	all_folders = []
+	for root, dirs, files in os.walk(data_path):
+		for name in files:
+			all_files.append(os.path.join(root, name))
+			
+		for name in dirs:
+			all_folders.append(os.path.join(root, name))
+	all_cols = [f for f in intended_cols]
+	#print(subfolders)
+	for sub in all_folders:
+		intended_cols_sub = cols.find_intended_cols_multiple_file(sub, path)
+		if not(intended_cols_sub == None):
+			col_diff = sorted(list(set(intended_cols_sub)- set(all_cols) ))
+			all_cols = all_cols + [f for f in col_diff]
+	all_cols = list(OrderedDict.fromkeys(all_cols))
+
+	gen_out = pr.Gen5_Rel(all_cols = all_cols,station_names = station_names,instance_names = instance_names,intended_cols= all_cols, path  = 'c:/gen5', flame_col = flame_col)
+	gen_out.main(data_path, result_dir)
+	p_out = partial(gen_out.main,result_dir = result_dir)
 	pool = Pool()
 	pool.map(p_out, all_files)
 	sub_results = [f.path for f in os.scandir(result_dir) if f.is_dir() ]
-	pool.map(join,sub_results)
 	pool.close()
 	pool.join()
+	pool2 = Pool()
+	pool2.map(join,sub_results)
+	pool2.close()
+	pool2.join()
 	'''for directory in sub_results:
 					df = pd.concat([pd.read_csv(file, low_memory = False) for file in os.scandir(directory.path)], ignore_index = True)
 					df.to_csv(joined_dir + directory.name + '.csv')'''
