@@ -76,7 +76,8 @@ class Dragon(pr.Preprocessing_Base):
 			df.rename(columns=self.rename_cols, inplace = True)
 			time =  pd.to_datetime(df["Time"])
 			df['Hours']=time.dt.hour
-			print(df.columns)
+			df["Heating"] = 0
+			df.loc[df["CHE_BMIN"] == 1, "Heating"] = 1
 			self.split_alarms(df)
 			df["Location"] = self.city.get(name)
 			df["Category"] = self.category.get(name)

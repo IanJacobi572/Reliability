@@ -46,6 +46,8 @@ def process(data):
 		#df_full["Date Time"] = str(date) + ' ' + str(df_full["TIME"].values[0])
 		#df_full["Hour"] = pd.to_datetime(df_full["TIME"],infer_datetime_format = True).dt.hour
 		k = r'C:\Anode\\data\\'+data.split('\\')[-1]
+		if not os.path.exists(k):
+			os.makedirs(k)
 		df_full.to_csv(k, index = False)
 if __name__ == '__main__':
 	pool = Pool()
