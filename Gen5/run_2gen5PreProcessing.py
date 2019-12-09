@@ -4,12 +4,15 @@ import os
 import matplotlib.pyplot as plt
 from scipy.signal import argrelextrema
 import Gen5Info as Info
+import swifter
 
 directory = r'C:\gen5\prp'
 resultPath = r'C:\gen5\preprocessed'
 
+print('DATA PREPROCESSING STARTED')
+
 #Cleaning/debug function
-def cleanApril(df, delete):
+def clean(df, delete):
     for column in list(Info.columns.keys()):
         trash=[value for value in df[column].unique() if value not in Info.columns.get(column)]
         trash=[value for value in trash if str(value)!='nan']
@@ -26,11 +29,13 @@ for fileName in os.listdir(directory):
     df = pd.read_csv(os.path.join(directory,fileName))   
     print(fileName)
     
-    if fileName=='NL0437_C3.csv' or fileName=='NL0441_C4.csv':
-        df.dropna(subset=['WHTRMODE'], inplace=True)
-        cleanApril(df,True)
+    #if 'C3' in fileName or 'C4' in fileName or 'F11' in fileName:
+    #    df.dropna(subset=['WHTRMODE'], inplace=True)
+    #    clean(df,True)
     
-    df['WHTRMODE'] = df['WHTRMODE'].apply(lambda x: 'Heat Pump' if x=='Heat-Pump' else x)
+    df['WHTRMODE'] = df['WHTRMODE'].swifter.apply(lambda x: 'Heat Pump' if x=='Heat-Pump' else x)
     
     df.to_csv(os.path.join(resultPath,fileName), index = False)
     print('\n\n\n')
+    
+print('DATA PREPROCESSING DONE')
