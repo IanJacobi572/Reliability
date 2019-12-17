@@ -6,14 +6,9 @@ def clean(fileName, channels_dir):
     dfC = pd.read_csv(os.path.join(channels_dir, fileName))
     split = fileName.split(" ")
     
-    if 'Water Mass(lbs)' in dfC.columns:
-        dfC = dfC[['TimeStamp (sec)', 'Ambient TC', 'Gas TC', 'Barometer', 'Gas ascf', 'WattHrs', 
-                  'Water (Gallons)', 'Watts', 'Water Flow (GPM)', 'Tin', 'Tout', 'Tank Outlet', 'Purge Valve', 
-                  'Drain Valve', 'Water Mass(lbs)', 'Drawn Water (Gallons)']].copy()
-    else:
-        dfC = dfC[['TimeStamp (sec)', 'Ambient TC', 'Gas TC', 'Barometer', 'Gas ascf', 'WattHrs', 
-              'Water (Gallons)', 'Watts', 'Water Flow (GPM)', 'Tin', 'Tout', 'Tank Outlet', 'Purge Valve', 
-              'Drain Valve', 'Drawn Water (Gallons)']].copy()
+    dfC = dfC[['TimeStamp (sec)', 'Ambient TC', 'Gas TC', 'Barometer', 'Gas ascf', 'WattHrs', 
+          'Water (Gallons)', 'Watts', 'Water Flow (GPM)', 'Tin', 'Tout', 'Tank Outlet', 'Purge Valve', 
+          'Drain Valve', 'Drawn Water (Gallons)']].copy()
 
     
     for index in range(0, len(split)):
@@ -30,5 +25,7 @@ def clean(fileName, channels_dir):
     else: 
         dfC['Model'] = '-'.join(subsplit[:-1])
     dfC['Iteration'] = subsplit[-1]
+    
+    dfC['TimeStamp (hrs)'] = dfC['TimeStamp (sec)']/3600
             
     return dfC
