@@ -5,7 +5,6 @@ import os
 from scipy.signal import argrelextrema
 import Gen5Info as Info
 from datetime import datetime
-from multiprocessing import Pool
 #from scipy.signal import argrelextrema
 
 directory = r'C:\gen5\preprocessed'
@@ -42,7 +41,7 @@ missingHours = {
     'F11': 140.3
 }
 
-def  process(fileName):
+for fileName in os.listdir(directory):
 
     #Load dataset
     df = pd.read_csv(os.path.join(directory,fileName))
@@ -188,8 +187,6 @@ def  process(fileName):
     
     print('\n-------------------------------------------------------------------------------------------------------------------\n')
         
-if __name__ == '__main__':
-    pool = Pool()
-    pool.map(process, [file.name for file in os.scandir(directory)])
-    print('DATA PROCESS DONE!')
+        
+print('DATA PROCESS DONE!')
 #Note to self: Maybe need to optimize the code but it works just fine (for now)
