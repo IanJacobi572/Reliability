@@ -3,7 +3,7 @@ import os
 import csv
 import re
 from multiprocessing import Pool
-data_path = r'C:\Anode\raw'
+data_path = r'H:\Kennys_Projects\Anode Project\Anode Voltage data'
 row = []
 #for data in os.scandir(data_path):
 def process(data):
