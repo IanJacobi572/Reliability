@@ -103,7 +103,7 @@ if __name__ == '__main__':
 			
 		for name in dirs:
 			all_folders.append(os.path.join(root, name))
-	all_cols = [f for f in intended_cols]
+	all_cols = [f for f in intended_cols if not f == "U"]
 	#print(subfolders)
 	for sub in all_folders:
 		intended_cols_sub = cols.find_intended_cols_multiple_file(sub, path)
