@@ -1,0 +1,1 @@
+"C:\Program Files (x86)\WinSCP\WinSCP.exe" /log="C:\Users\anes.madani\Desktop\Anes\Thor\Upload\WinSCP.log" /ini=nul /script="C:\Users\anes.madani\Desktop\Anes\Thor\Upload\update.txt"

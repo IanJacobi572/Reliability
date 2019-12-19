@@ -1,0 +1,8 @@
+open ftp://anes.madani:Pracc159@ftp1.onerheem.com/
+
+lcd "C:\Thor\raw"
+cd Thor
+
+synchronize local
+
+exit
