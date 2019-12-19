@@ -100,7 +100,7 @@ for fileName in os.listdir(directory):
     #df['ALERT CODE'] = np.where(df['ALARMS'].str[0]=='T', df['ALARMS'].str[:4], None)
     #df['ALERT DESC'] = np.where(df['ALARMS'].str[0]=='T', df['ALARMS'].str[5:], None)
     
-    df.drop(['Time', 'deltaT'], axis=1, inplace=True)
+    df.drop(['Time', 'deltaT', 'Day'], axis=1, inplace=True)
    
     df.to_csv(os.path.join(resultPath,fileName), index = False)    
     
