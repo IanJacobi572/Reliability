@@ -26,7 +26,7 @@ class Gen5_Rel(pr.Preprocessing_Base):
 	def create_multiple_file(self, df, result_dir, fileN, i, intended_cols_i, data_path):
 		try:
 			split_df = df[intended_cols_i].copy()
-			split_df.columns = self.intended_cols[:-1]
+			split_df.columns = self.intended_cols
 		except KeyError as e:
 			#print(e.args[0])
 			missing = e.args[0].split('\'')
@@ -112,4 +112,3 @@ class Gen5_Rel(pr.Preprocessing_Base):
 			intended_cols_i =['Time', 'Date'] + [col + "_" + str(i) for col in self.intended_cols[2:]]
 			zero = np.array([0])
 			self.create_multiple_file(df, result_dir, fileN, i, intended_cols_i, data_path)
-	  
