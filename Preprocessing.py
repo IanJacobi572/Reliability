@@ -20,7 +20,7 @@ def find_intended_cols_multiple_file(data_path, path):
             if(entry.name.endswith('.csv')):
                 df = pd.read_csv(data_path + '/' + entry.name, low_memory = False)
                 intended_cols  = df.columns.values.tolist()[:2] + [col.rsplit('_',1)[0] for col in df.columns.values.tolist()[2:] if not col.startswith("Un")]
-                intended_cols.remove("U")
+                if "U" in intended_cols: intended_cols.remove("U")
                 intended_cols_no_dupes = list(OrderedDict.fromkeys(intended_cols))
                 #print(intended_cols_no_dupes)
                 #print(entry.name)
