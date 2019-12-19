@@ -32,7 +32,6 @@ for fileName in os.listdir(directory):
     #if 'C3' in fileName or 'C4' in fileName or 'F11' in fileName:
     #    df.dropna(subset=['WHTRMODE'], inplace=True)
     #    clean(df,True)
-    
     df['WHTRMODE'] = df['WHTRMODE'].swifter.apply(lambda x: 'Heat Pump' if x=='Heat-Pump' else x)
     
     df.to_csv(os.path.join(resultPath,fileName), index = False)

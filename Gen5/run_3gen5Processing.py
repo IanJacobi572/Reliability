@@ -5,7 +5,6 @@ import os
 from scipy.signal import argrelextrema
 import Gen5Info as Info
 from datetime import datetime
-from multiprocessing import Pool
 #from scipy.signal import argrelextrema
 
 directory = r'C:\gen5\preprocessed'
@@ -16,11 +15,11 @@ print('DATA PROCESS STARTED')
 missingHours = {
     'C03': 168.25,
     'C04': 431,
-    'C05': 480.5,
-    'C06': 489.5,
-    'C09': 239,
-    'C10': 506,
-    'C11': 112.2,
+    'C05': 498.5,
+    'C06': 498.5,
+    'C09': 248,
+    'C10': 515,
+    'C11': 124.84,
 
     'D01': 146,
     'D02': 149,
@@ -32,17 +31,17 @@ missingHours = {
     'D08': 150,
 
     'F01': 85,
-    'F02': 78.5,
+    'F02': 79.3,
     'F03': 61.8,
     'F05': 62.4,
     'F06': 68,
     'F07': 139.5,
     'F08': 78.37,
-    'F10': 74,
+    'F10': 74.2,
     'F11': 140.3
 }
 
-def  process(fileName):
+for fileName in os.listdir(directory):
 
     #Load dataset
     df = pd.read_csv(os.path.join(directory,fileName))
@@ -114,19 +113,24 @@ def  process(fileName):
     
     df['Upper Element Running Time (sec)'] = np.where(df['HEATCTRL']=='Upper Element', df['deltaT'],0)
     df['Upper Element On (hrs)'] = df['Upper Element Running Time (sec)']/3600
-    df['Upper Element On/Day'] = df['Upper Element On (hrs)'].groupby(df['Day']).transform('sum')
+    #df['Upper Element On/Day'] = df['Upper Element On (hrs)'].groupby(df['Day']).transform('sum')
 
     df['Lower Element Running Time (sec)'] = np.where(df['HEATCTRL']=='Lower Element', df['deltaT'],0)
     df['Lower Element On (hrs)'] = df['Lower Element Running Time (sec)']/3600
-    df['Lower Element On/Day'] = df['Lower Element On (hrs)'].groupby(df['Day']).transform('sum')
+    #df['Lower Element On/Day'] = df['Lower Element On (hrs)'].groupby(df['Day']).transform('sum')
 
     df['Elements Off Time (sec)'] = np.where(df['HEATCTRL']=='Off', df['deltaT'],0)
     df['Elements Off (hrs)'] = df['Elements Off Time (sec)']/3600
-    df['Elements Off/Day'] = df['Elements Off (hrs)'].groupby(df['Day']).transform('sum')
+    #df['Elements Off/Day'] = df['Elements Off (hrs)'].groupby(df['Day']).transform('sum')
 
     df['Elements Not Recording Time (sec)'] = np.where(df['HEATCTRL']==None, df['deltaT'],0)
     df['Elements Not Recording (hrs)'] = df['Elements Not Recording Time (sec)']/3600
-    df['Elements Not Recording/Day'] = df['Elements Not Recording (hrs)'].groupby(df['Day']).transform('sum')
+    #df['Elements Not Recording/Day'] = df['Elements Not Recording (hrs)'].groupby(df['Day']).transform('sum')
+    
+    df['Upper Element On Progress (hrs)'] = df['Upper Element On (hrs)'].cumsum()
+    df['Lower Element On Progress (hrs)'] = df['Lower Element On (hrs)'].cumsum()
+    df['Element Off Progress (hrs)'] = df['Elements Off (hrs)'].cumsum()
+    df['Elements Not Recording Progress(hrs)'] = df['Elements Not Recording (hrs)'].cumsum()
     
     df['Completed Elements (hrs)']=df['Upper Element On (hrs)'].sum() + df['Lower Element On (hrs)'].sum()
     
@@ -172,14 +176,17 @@ def  process(fileName):
     df['ALERT CODE'] = np.where(df['ALARM_01'].str[0]=='T', df['ALARM_01'].str[:4], None)
     df['ALERT DESC'] = np.where(df['ALARM_01'].str[0]=='T', df['ALARM_01'].str[5:], None)
     
+    df['UPHTRTMP'] = df['UPHTRTMP'].apply(lambda x: pd.to_numeric(x, errors='coerce')).dropna()
+    df['Element Fail'] = np.where(((df['COMP_RLY']=='On') 
+                               & (df['HEATCTRL']=='Upper Element') 
+                               & (df['UPHTRTMP']<120)), 'Element failure at '+ str(df['Date/Time']), False)
+    
     #df.drop(['Target (hrs)/row', 'Date/Time'], axis=1, inplace=True)
    
     df.to_csv(os.path.join(resultPath,fileName), index = False)    
     
     print('\n-------------------------------------------------------------------------------------------------------------------\n')
         
-if __name__ == '__main__':
-    pool = Pool()
-    pool.map(process, [file.name for file in os.scandir(directory)])
-    print('DATA PROCESS DONE!')
+        
+print('DATA PROCESS DONE!')
 #Note to self: Maybe need to optimize the code but it works just fine (for now)

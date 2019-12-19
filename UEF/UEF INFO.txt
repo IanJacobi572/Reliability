@@ -1,3 +1,6 @@
+TIN TOUT TEMP = 5sec after draw start until draw end
+
+
 Mi = Total Water Drawn {m}
 
 //Cpi= Tdelta+Tin/2
@@ -39,3 +42,35 @@ sum: from i=1 to N
 hhv: Get Higher heating value from Variables folder
 Mi: Water mass
 Gas Consumptopm: Gas ascf
+
+
+Correction Factor (1)
+#Supply Water Temp per Draw
+#Delivery Water Temp per Draw
+#Power Consumptin per Draw
+#Gas Consumption per Draw
+Mi
+#Average Temp
+Cp(i)
+Correction Factor 24hrs
+Qhw(i)
+Qhw67(i)
+Qhwd(i)
+UEF(i)
+
+
+
+
+
+
+
+
+
+Before the test start there's generally 1hr wait, the way to know how long was the wait is to check the Tout temp
+Tin should be 58 +-2, 5sec after draw start 
+Use Purge valve instead of events because they shouldn't happend at the same time, it's purge draw purge draw..
+after 30sec of draw complete check the burner 
+between 4th and 5th draw, if the gas valve is open for a long time then there could be a gas leak (gas ascf)
+barometer and weather correlation (high barometer is warm, low is stormy)
+after draw complete, calculate time before cut out (should be around 30sec)
+compare power input (get it from report or .sm files) with Qr/time of 1st draw (hrs)
