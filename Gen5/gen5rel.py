@@ -76,7 +76,7 @@ class Gen5_Rel(pr.Preprocessing_Base):
 					date = self.get_file_date((split_df["Date"].values[-3]))
 					date_str = date.strftime("%Y_%m_%d")
 
-					split_df["Month"] = date.strftime('%B')
+					#split_df["Month"] = date.strftime('%B')
 					#start_date = parse('2019-7-8').date()
 					split_df.to_csv(k + date_str +".csv", index= False)
 					print(station +' '+ date_str + ' Finished')
