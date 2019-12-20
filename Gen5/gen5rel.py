@@ -25,7 +25,7 @@ class Gen5_Rel(pr.Preprocessing_Base):
 	def create_multiple_file(self, df, result_dir, fileN, i, intended_cols_i, data_path):
 		try:
 			split_df = df[intended_cols_i].copy()
-			split_df.columns = self.intended_cols[:-1]
+			split_df.columns = self.intended_cols
 		except KeyError as e:
 			#print(e.args[0])
 			missing = e.args[0].split('\'')
