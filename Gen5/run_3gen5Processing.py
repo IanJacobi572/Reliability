@@ -56,27 +56,27 @@ for fileName in os.listdir(directory):
     #Date/Timeine Station and UnitName columns in a new column
     df['Station/UnitName']=key.getStation() + '/' + key.getIcn()
     #Addd Heater Base Model column
-    df['Heater Base Model']=key.getBaseModel()
     df['Gallon Type'] = key.getBaseModel()[2:4]
     
     #Add Cycling Option that has 3 different types
-    if key.getCycles()==78.5:
-        df['Cycling Option']='3 (78.5 Cycles/Day)'
-    elif key.getCycles()==76.5:
-        df['Cycling Option']='2 (76.5 Cycles/Day)'
-    elif key.getCycles()==80:
-        df['Cycling Option']='1 (80 Cycles/Day)'
+    #if key.getCycles()==78.5:
+    #    df['Cycling Option']='3 (78.5 Cycles/Day)'
+    #elif key.getCycles()==76.5:
+    #    df['Cycling Option']='2 (76.5 Cycles/Day)'
+    #elif key.getCycles()==80:
+    #    df['Cycling Option']='1 (80 Cycles/Day)'
         
     print('\nSorting by date/time')
     #Sort by date then by time
     df['Date/Time'] = df['Date'] + ' ' + df['Time']
     df['Date/Time'] = pd.to_datetime(df['Date/Time'], infer_datetime_format=True)
+    df.sort_values(by=['Date/Time'], inplace=True)
     df['Time'] = pd.to_datetime(df.Time, infer_datetime_format=True)
     df['Date'] = pd.to_datetime(df.Date, infer_datetime_format=True)
-    if len(df['Date'].unique())>0:
-        df.sort_values(by=['Date', 'Time'], inplace=True)
-    else:
-        df.sort_values(by=['Time'], inplace=True)
+    #if len(df['Date'].unique())>0:
+    #    df.sort_values(by=['Date', 'Time'], inplace=True)
+    #else:
+    #    df.sort_values(by=['Time'], inplace=True)
     df.reset_index(drop=True, inplace=True)
     print('Sort by date/time complete!')
     
@@ -99,7 +99,7 @@ for fileName in os.listdir(directory):
     df['deltaT'] = df['Date/Time'].groupby(df['Day']).diff().dt.total_seconds()
     df['deltaT'].fillna(0, inplace=True)
 
-    df['Time'] = df['Time'].dt.time
+    #df['Time'] = df['Time'].dt.time
     df['Date'] = df['Date'].dt.date
     
     df['Compressor Running Time (sec)'] = np.where(df['COMP_RLY']=='On', df['deltaT'],0)
@@ -136,13 +136,11 @@ for fileName in os.listdir(directory):
     
     target = 3338
 
-    df['Target (hrs)/row'] = df['deltaT']/3600
-
     df['Compressor On/Day'] = 7
     df['Compressor On/Day'].iloc[change_index:] = df['Compressor Running Time (hrs)'].iloc[change_index:].groupby(df['Day'].iloc[change_index:]).transform('sum')
 
-    df['Compressor Off/Day'] = 0
-    df['Compressor Off/Day'].iloc[change_index:] = df['Compressor Non Running Time (hrs)'].iloc[change_index:].groupby(df['Day'].iloc[change_index:]).transform('sum')
+    #df['Compressor Off/Day'] = 0
+    #df['Compressor Off/Day'].iloc[change_index:] = df['Compressor Non Running Time (hrs)'].iloc[change_index:].groupby(df['Day'].iloc[change_index:]).transform('sum')
 
     df['Compressor ---/Day'] = 0
     df['Compressor ---/Day'].iloc[change_index:] = df['Compressor Not Recording Time (hrs)'].iloc[change_index:].groupby(df['Day'].iloc[change_index:]).transform('sum')
@@ -150,21 +148,21 @@ for fileName in os.listdir(directory):
     df['Target CRT/Day'] = 7
     df['Target CRT/Day'].iloc[change_index:] = 24
 
-    df['Recorded CRT/Day'] = df['Target (hrs)/row'].groupby(df['Day']).transform('sum')
-    df['DownTime/Day'] = 24-df['Recorded CRT/Day']
-    df['No Data/Day'] = df['DownTime/Day']+df['Compressor ---/Day']
+    df['Target (hrs)/row'] = df['deltaT']/3600
+    df['Recorded Time'] = df['Target (hrs)/row'].groupby(df['Day']).transform('sum')
+    df['DownTime/Day'] = 24-df['Recorded Time']
+    df['No Data (hrs)'] = df['DownTime/Day']+df['Compressor ---/Day']
 
     df['Completed (hrs)']=df['Compressor Running Time (hrs)'].iloc[change_index:].sum() + old_days*7
     df['Completed (hrs)']= df['Completed (hrs)']+missingHours.get(key.getStation())
     df['Not Completed (hrs)']=target-df['Completed (hrs)']
 
-    df['Target (hrs)']=df['Target (hrs)/row'].iloc[change_index:].sum() + old_days*7
+    #df['Target (hrs)']=df['Target (hrs)/row'].iloc[change_index:].sum() + old_days*7
 
     df['Progress/Day'] = df['Compressor On/Day']/df['Target CRT/Day']
-
     df['Progress'] = df['Completed (hrs)']/target
     
-    df['Target'] = target
+    #df['Target'] = target
     days_left = df.loc[0, 'Not Completed (hrs)']/24
     last_date = df['Date'].iloc[-1]
     target_date = last_date + pd.DateOffset(days=days_left)
@@ -181,7 +179,7 @@ for fileName in os.listdir(directory):
                                & (df['HEATCTRL']=='Upper Element') 
                                & (df['UPHTRTMP']<120)), 'Element failure at '+ str(df['Date/Time']), False)
     
-    #df.drop(['Target (hrs)/row', 'Date/Time'], axis=1, inplace=True)
+    df.drop(['Time', 'Target CRT/Day', 'deltaT', 'Day', 'Station'], axis=1, inplace=True)
    
     df.to_csv(os.path.join(resultPath,fileName), index = False)    
     
