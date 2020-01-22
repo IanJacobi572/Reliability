@@ -49,12 +49,17 @@ for fileName in os.listdir(directory):
     
     df['Compressor Running Time (sec)'] = np.where(df['COMP_RLY']=='On', df['deltaT'],0)
     df['Compressor Running Time (hrs)'] = df['Compressor Running Time (sec)']/3600
+    df['Compressor Runnint Time Progress (hrs)'] = df['Compressor Running Time (hrs)'].cumsum()
 
     df['Compressor Non Running Time (sec)'] = np.where(df['COMP_RLY']=='Off', df['deltaT'],0)
     df['Compressor Non Running Time (hrs)'] = df['Compressor Non Running Time (sec)']/3600
 
     df['Compressor Not Recording Time (sec)'] = np.where(df['COMP_RLY']=='---', df['deltaT'],0)
     df['Compressor Not Recording Time (hrs)'] = df['Compressor Not Recording Time (sec)']/3600
+    
+    df['High Speed'] = np.where(df['FAN_CTRL'] == 'High Speed', df['deltaT']/3600,0)
+    df['Low Speed'] = np.where(df['FAN_CTRL'] == 'Low Speed', df['deltaT']/3600,0)
+    df['Off'] = np.where(df['FAN_CTRL'] == 'Off', df['deltaT']/3600,0)
     
     target = 2275.90
 

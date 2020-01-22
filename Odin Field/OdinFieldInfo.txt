@@ -1,0 +1,28 @@
+EB4:
+    65 Gal, 10980, 80-91-33-8A-6D-92, 6056 E Baseline Rd Ste 155, Mesa, AZ 85207, (Data: 4th Dec)
+    80 Gal, 11057, 80-91-33-8A-71-8A, 4141 Northgate Blvd., Suite 3, Sacramento, CA 95834, (Data: 18th Dec-23rd Dec)
+    
+    80 Gal, 11064, 80-91-33-8A-96-4C, 176 N Caln Road, Coastesville, PA 19320 => NO DATA
+    
+    80 Gal, 11065, 80-91-33-8A-AC-8D, 4098 Kingsley Park Ln, Peachtree Corners, GA 30096, (Data: 26th Dec-31st Dec)
+    80 Gal, 10970, 80-91-33-8A-DC-67, 2645 Morse Rd, Columbus, OH 43231, (Data: 18th Nov-1st Dec)
+    
+    50 Gal, 10971, 80-91-33-8A-AD-87, 8402 Laurel Fair Cir Ste 111 - Tampa, FL 33610 => NO DATA
+    50 Gal, 10989, 80-91-33-8A-8C-25, 8402 Laurel Fair Cir Ste 111 - Tampa, FL 33611 => NO DATA
+    50 Gal, 11018, 80-91-33-8A-84-88, 4141 Northgate Blvd., Suite 3, Sacramento, CA 95834 => NO DATA
+    50 Gal, 11024, 80-91-33-8A-A8-D7, 4320 128th St E, Tacoma, Washington, 98446 => NO DATA
+    50 Gal, 10908, 80-91-33-8A-AC-7, 469-800 Amesbury Dr, Susanville, CA 96131 => Wrong Address
+    40 Gal, 11020, 80-91-33-8A-AC-7B, 6416 Hegerman Street, Philadelphia, PA 19046 => NO DATA
+    40 Gal, 11025, 80-91-33-8A-80-9B, None => NO DATA
+    40 Gal, 11044, 80-91-33-8A-84-91, 6056 E Baseline Rd Ste 155, Mesa, AZ 85207, (Data: 31st Dec-1st Jan)
+    
+40 Gal:
+    Plus, 10683, 80-91-33-8A-80-A6, 8402 Laurel Fair Cir Ste 111 - Tampa, FL 33610, (Data: 22nd Nov-26th Nov)
+    
+    Plus, 10946, 80-91-33-8A-AC-9C, None => NO DATA
+    Plus, 10949, 80-91-33-8A-80-A8, 1920 Grandstand Dr, San Antonio TX 78238 => NO DATA
+    Plusm 10901, 80-91-33-8A-2D-E, 8402 Laurel Fair Cir Ste 111 - Tampa, FL 33610 => Wrong Address
+    
+50 Gal:
+    Plus, 10893, 80-91-33-8A-DC-62, 3029 SE 82nd Ave, Portland, OR 97266 => NO DATA
+    Plus, 10894, 80-91-33-8A-80-C6, 3029 SE 82nd Ave, Portland, OR 97267 => NO DATA

@@ -40,32 +40,31 @@ info = {
     'MGM 1' : Info ('65', '10879', 5 , [75], 'Existing Lab Condition', 120, 125, 75, 65, 'MGM 1', 1),
     'MGM 2' : Info ('65', '10986', 5, [75], 'Existing Lab Condition', 120, 125, 75, 65, 'MGM 2', 2),
     'MGM 3' : Info ('80', '10987', 5, [75], 'Existing Lab Condition', 120, 125, 75, 80, 'MGM 3', 3),
-    'MGM 4' : Info ('80', '10988', 5, [75], 'Existing Lab Condition', 120, 125, 75, 80, 'MGM 4', 4)    
-    #'C4' : Info ('HB50G5D', 'NL0441', 22, 'Energy Saver', 'Builder', 30, [75], 'Existing Lab Condition', 240, 125, 45, 76.5, '2019-7-8', '2019-7-8', '2019-10-10', 'C04', 2),
+    'MGM 4' : Info ('80', '10988', 5, [75], 'Existing Lab Condition', 120, 125, 75, 80, 'MGM 4', 4)
     }
 
 columns = {
     #'Time' : 
     #'Date' : 
-    'INSTANCE' : [i for i in range(1, 17)],
+    #'INSTANCE' : [i for i in range(1, 17)],
     'DMDCYCLE' : ['Yes', 'No'],
     'COMP_RLY' : ['On', 'Off'],
-    'HEATCTRL' : ['Off', 'Lower Element', 'Upper Element'],
+    #'HEATCTRL' : ['Off', 'Lower Element', 'Upper Element'],
     'FAN_CTRL' : ['Off', 'Low Speed', 'High Speed'],
     #'EXACTUAL' :
     #'EXVSUPER' : 
-    #'AMBIENTT' : 
-    #'LOHTRTMP' : 
-    #'UPHTRTMP' : 
-    #'EVAPTEMP' : 
-    #'SUCTIONT' : 
-    #'DISCTEMP' : 
+    'AMBIENTT' : [],
+    'LOHTRTMP' : [],
+    'UPHTRTMP' : [],
+    'EVAPTEMP' : [],
+    'SUCTIONT' : [],
+    'DISCTEMP' : [],
     #'ALARMS' : [i for i in range(0, 7)],
     #'ALARM_01': ['', 'A004', 'A005' , 'A006', 'A007', 'A008', 'A101', 'A102', 'A103', 'A104', 'A105', 'A106', 
     #   'A107', 'A108', 'A125', 'A126', 'A127', 'A128', 'A129', 'A130', 'A200', 'A900', 'A902', 'A903', 'A904',  
     #   'A905', 'T007', 'T009', 'T131', 'T132', 'T300', 'T901']
     #'COMPSTRK' : NO INFO?!!
-    'WHTRCNFG' : ['Off', 'Energy Saver', 'Heat Pump', 'High Demand', 'Electric', 'Vacation'],
+    #'WHTRCNFG' : ['Off', 'Energy Saver', 'Heat Pump', 'High Demand', 'Electric', 'Vacation'],
     'WHTRMODE' : ['Off: Disabled', 'Off: ECO Trip', 'Off: Temp Fail', 'Off: HiTankTemp', 'Off: No Demand',  
     'Electric', 'High Demand',  'Energy Saver', 'Pre-Warm Mode', 'Dry Fire Alarm', 'Heat Pump', 'Heat-Pump', 'Vacation'],
     #'WHTRSETP' : 

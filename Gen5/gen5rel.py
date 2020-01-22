@@ -44,7 +44,7 @@ class Gen5_Rel(pr.Preprocessing_Base):
 					instance = int(split_df["INSTANCE"].values.tolist()[-1])
 					if not instance == int(split_df["INSTANCE"].values.tolist()[0]):
 						split_df.drop([0], inplace=True)
-						print("dropped" + fileN)
+						#print("dropped" + fileN)
 				except:
 					instance = str(i)
 				instance = str(instance)
@@ -79,7 +79,7 @@ class Gen5_Rel(pr.Preprocessing_Base):
 					#split_df["Month"] = date.strftime('%B')
 					#start_date = parse('2019-7-8').date()
 					split_df.to_csv(k + date_str +".csv", index= False)
-					print(station +' '+ date_str + ' Finished')
+					#print(station +' '+ date_str + ' Finished')
 				except Exception as e:
 					pass
 	#reads input files 

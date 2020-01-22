@@ -13,38 +13,39 @@ resultPath = r'C:\gen5\processed'
 print('DATA PROCESS STARTED')
 
 missingHours = {
-    'C03': 168.25,
-    'C04': 431,
-    'C05': 498.5,
-    'C06': 498.5,
-    'C09': 248,
-    'C10': 515,
-    'C11': 124.84,
+    'C03': 215.62,
+    'C04': 512.52,
+    'C05': 533.58,
+    'C06': 579.41,
+    'C09': 325.42,
+    'C10': 592.62,
+    'C11': 170.33,
 
-    'D01': 146,
-    'D02': 149,
-    'D03': 151,
-    'D04': 143,
-    'D05': 150,
-    'D06': 150,
-    'D07': 156,
-    'D08': 150,
+    'D01': 217.71,
+    'D02': 224,
+    'D03': 225.76,
+    'D04': 223.61,
+    'D05': 225.62,
+    'D06': 228.76,
+    'D07': 231.96,
+    'D08': 227.28,
 
-    'F01': 85,
-    'F02': 79.3,
-    'F03': 61.8,
-    'F05': 62.4,
-    'F06': 68,
-    'F07': 139.5,
-    'F08': 78.37,
-    'F10': 74.2,
-    'F11': 140.3
+    'F01': 89.24,
+    'F02': 110.5,
+    'F03': 63.76,
+    'F05': 84.99,
+    'F06': 92.47,
+    'F07': 210.72,
+    'F08': 79.88,
+    'F10': 78.27,
+    'F11': 207.57
 }
 
 for fileName in os.listdir(directory):
 
     #Load dataset
     df = pd.read_csv(os.path.join(directory,fileName))
+    df = df.iloc[::-1]
     
     print(fileName)
     
@@ -57,14 +58,7 @@ for fileName in os.listdir(directory):
     df['Station/UnitName']=key.getStation() + '/' + key.getIcn()
     #Addd Heater Base Model column
     df['Gallon Type'] = key.getBaseModel()[2:4]
-    
-    #Add Cycling Option that has 3 different types
-    #if key.getCycles()==78.5:
-    #    df['Cycling Option']='3 (78.5 Cycles/Day)'
-    #elif key.getCycles()==76.5:
-    #    df['Cycling Option']='2 (76.5 Cycles/Day)'
-    #elif key.getCycles()==80:
-    #    df['Cycling Option']='1 (80 Cycles/Day)'
+    df['Lab Condition'] = key.getAmbientCondition() + ' ' + key.getAmbientTmp()
         
     print('\nSorting by date/time')
     #Sort by date then by time
@@ -73,10 +67,7 @@ for fileName in os.listdir(directory):
     df.sort_values(by=['Date/Time'], inplace=True)
     df['Time'] = pd.to_datetime(df.Time, infer_datetime_format=True)
     df['Date'] = pd.to_datetime(df.Date, infer_datetime_format=True)
-    #if len(df['Date'].unique())>0:
-    #    df.sort_values(by=['Date', 'Time'], inplace=True)
-    #else:
-    #    df.sort_values(by=['Time'], inplace=True)
+
     df.reset_index(drop=True, inplace=True)
     print('Sort by date/time complete!')
     
@@ -99,7 +90,6 @@ for fileName in os.listdir(directory):
     df['deltaT'] = df['Date/Time'].groupby(df['Day']).diff().dt.total_seconds()
     df['deltaT'].fillna(0, inplace=True)
 
-    #df['Time'] = df['Time'].dt.time
     df['Date'] = df['Date'].dt.date
     
     df['Compressor Running Time (sec)'] = np.where(df['COMP_RLY']=='On', df['deltaT'],0)
@@ -131,6 +121,10 @@ for fileName in os.listdir(directory):
     df['Lower Element On Progress (hrs)'] = df['Lower Element On (hrs)'].cumsum()
     df['Element Off Progress (hrs)'] = df['Elements Off (hrs)'].cumsum()
     df['Elements Not Recording Progress(hrs)'] = df['Elements Not Recording (hrs)'].cumsum()
+    
+    #df['Up Elm'] = np.where((df['HEATCTRL']=='Upper Element') & (df['HEATCTRL'].shift()!='Upper Element'), 1,0)
+    df['Elements Cycle'] = np.where((df['HEATCTRL']=='Upper Element') & (df['HEATCTRL'].shift()!='Upper Element'), 1,0)
+    #df['Elements Cycle'] = df['Up Elm'].groupby(df['Day']).transform('sum')
     
     df['Completed Elements (hrs)']=df['Upper Element On (hrs)'].sum() + df['Lower Element On (hrs)'].sum()
     
@@ -174,13 +168,23 @@ for fileName in os.listdir(directory):
     df['ALERT CODE'] = np.where(df['ALARM_01'].str[0]=='T', df['ALARM_01'].str[:4], None)
     df['ALERT DESC'] = np.where(df['ALARM_01'].str[0]=='T', df['ALARM_01'].str[5:], None)
     
+    if len(df['ALARM CODE'].unique())>1:
+        df['ALARM COUNT'] = (df['ALARM CODE'] != df['ALARM CODE'].shift()).mask(df['ALARM CODE'].isnull()).groupby(df['ALARM CODE']).cumsum()
+    else:
+        df['ALARM COUNT'] = None
+        
+    if len(df['ALERT CODE'].unique())>1:
+        df['ALERT COUNT'] = (df['ALERT CODE'] != df['ALERT CODE'].shift()).mask(df['ALERT CODE'].isnull()).groupby(df['ALERT CODE']).cumsum()
+    else:
+        df['ALERT COUNT'] = None
+    
     df['UPHTRTMP'] = df['UPHTRTMP'].apply(lambda x: pd.to_numeric(x, errors='coerce')).dropna()
     df['Element Fail'] = np.where(((df['COMP_RLY']=='On') 
                                & (df['HEATCTRL']=='Upper Element') 
                                & (df['UPHTRTMP']<120)), 'Element failure at '+ str(df['Date/Time']), False)
     
-    df.drop(['Time', 'Target CRT/Day', 'deltaT', 'Day', 'Station'], axis=1, inplace=True)
-   
+    df.drop(['Time', 'Target CRT/Day', 'deltaT', 'Day', 'Station', 'Unit_Name', 'Element Fail', 'HEATCTRL'], axis=1, inplace=True)
+       
     df.to_csv(os.path.join(resultPath,fileName), index = False)    
     
     print('\n-------------------------------------------------------------------------------------------------------------------\n')
